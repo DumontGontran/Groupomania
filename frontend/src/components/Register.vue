@@ -41,7 +41,7 @@
       <input type="submit" value="Valider" id="submit" v-on:click.prevent="registerSubmit" />
       <router-link class="linkForm" to="/login">Se Connecter</router-link>
     </div>
-    <p class="message">{{ message }}</p>
+    <p class="message">{{ state.message }}</p>
   </form>
 </template>
 
@@ -99,12 +99,11 @@ export default {
         .then(res => {
           console.log(res)
           console.log(user)
-          this.message = res.data.message
+          this.state.message = res.data.message
         })
         .catch(error => {
           console.log(error)
           console.log(user)
-          this.message = 'Le formulaire doit être correctement remplis !'
         })
     }
   }
