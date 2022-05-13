@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const userCtrl = require('../controllers/user');
-const registerValidation = require('../middleware/registerValidation');
-const userSchema = require('../validations/registerSchema');
+const schema = require('../schemas/user')
+const bodyValidation = require('../middleware/bodyValidation');
 
-router.post('/register', registerValidation(userSchema), userCtrl.register);
+router.post('/register', bodyValidation(schema.register), userCtrl.register);
 /* router.post('/login', userCtrl.login); */
 
 module.exports = router;

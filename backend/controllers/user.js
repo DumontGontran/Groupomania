@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 
 require('dotenv').config('../.env');
 const mysql = require('mysql2');
+const User = require('../types/user');
 
 const connection = mysql.createConnection({
     host: `${process.env.MYSQL_HOST}`,
@@ -20,17 +21,13 @@ const connection = mysql.createConnection({
 
 exports.register = async (req, res) => {
   try {
-      const lastName = req.body.lastName;
-      const firstName = req.body.firstName;
-      const email = req.body.email.toLowerCase().split(' ').join('');
-      const password = req.body.password;
-      const confirmPassword = req.body.confirmPassword;
+    const newUser = new User(req.body);
 
-    if(confirmPassword !== password){
+    if(req.body.confirmPassword !== newUser.password){
       return res.status(409).json({ message: 'Les mots de passe doivent être identiques !'});
     }else{
-    const hash = await bcrypt.hash(password, 10);
-    connection.query(`INSERT INTO user (lastName, firstName, email, password) VALUES (?,?,?,?)`, [lastName, firstName, email, hash]);
+    const hash = await bcrypt.hash(newUser.password, 10);
+    connection.query(`INSERT INTO user (lastName, firstName, email, password) VALUES (?,?,?,?)`, [newUser.lastName, newUser.firstName, newUser.email, hash]);
     return res.status(201).json({message: 'Inscription réussie !'});
     }
   }
