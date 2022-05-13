@@ -1,60 +1,97 @@
 <template>
+  <img class="logo" src="../assets/logo/icon-above-font.svg" alt="Logo Groupomania"/>
   <form class="flex flex_column">
     <h1>S'inscrire</h1>
     <label for="lastName">Nom:</label>
     <input class="flex flex_justify--center flex_align--center" type="text" name="lastName" id="lastName"
-      v-model="registerData.lastName" />
-    <p class="lastNameError"></p>
+      v-model="state.lastName" :class="{ 'is-invalid': state.lastName.$error }" placeholder="Doe"
+      v-on:keyup.prevent="registerValidation" />
+    <div class="invalid-feedback">
+      <p v-if="v$.lastName.$error">{{ v$.lastName.$errors[0].$message }}</p>
+    </div>
     <label for="firstName">Prénom:</label>
     <input class="flex flex_justify--center flex_align--center" type="text" name="firstName" id="firstName"
-      v-model="registerData.firstName" />
-    <p class="firstNameError"></p>
+      v-model="state.firstName" :class="{ 'is-invalid': state.firstName.$error }" placeholder="John"
+      v-on:keyup.prevent="registerValidation" />
+    <div class="invalid-feedback">
+      <p v-if="v$.firstName.$error">{{ v$.firstName.$errors[0].$message }}</p>
+    </div>
     <label for="email">Email:</label>
     <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
-      v-model="registerData.email" />
-    <p class="emailError"></p>
+      v-model="state.email" :class="{ 'is-invalid': state.email.$error }" placeholder="doe.john@outlook.fr"
+      v-on:keyup.prevent="registerValidation" />
+    <div class="invalid-feedback">
+      <p v-if="v$.email.$error">{{ v$.email.$errors[0].$message }}</p>
+    </div>
     <label for="password">Mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password"
-      v-model="registerData.password" />
-    <p class="passwordError"></p>
+      v-model="state.password" :class="{ 'is-invalid': state.password.$error }" placeholder="Motdepasse"
+      v-on:keyup.prevent="registerValidation" />
+    <div class="invalid-feedback">
+      <p v-if="v$.password.$error">{{ v$.password.$errors[0].$message }}</p>
+    </div>
     <label for="confirmPassword">Confirmer mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="confirmPassword"
-      id="confirmPassword" v-model="registerData.confirmPassword" />
-    <p class="confirmPasswordError"></p>
+      id="confirmPassword" v-model="state.confirmPassword" :class="{ 'is-invalid': state.confirmPassword.$error }"
+      placeholder="Motdepasse" v-on:keyup.prevent="registerValidation" />
+    <div class="invalid-feedback">
+      <p v-if="v$.confirmPassword.$error">{{ v$.confirmPassword.$errors[0].$message }}</p>
+    </div>
     <div class="navForm flex flex_row flex_between flex_align--center">
-      <input type="submit" value="Valider" id="submit" v-on:click.prevent="registerPost" />
+      <input type="submit" value="Valider" id="submit" v-on:click.prevent="registerSubmit" />
       <router-link class="linkForm" to="/login">Se Connecter</router-link>
     </div>
-    <p class="message">{{ registerMessage.message }}</p>
+    <p class="message">{{ message }}</p>
   </form>
 </template>
 
 <script>
 import axios from 'axios'
+import useVuelidate from '@vuelidate/core'
+import { required, minLength, maxLength, email, sameAs } from '@vuelidate/validators'
+import { reactive, computed } from 'vue'
+
 export default {
   name: "RegisterForm",
-  data() {
-    return {
-      registerMessage:{
+  setup() {
+    const state = reactive({
+      lastName: '',
+      firstName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
       message: ''
-      },
-      registerData: {
-        lastName: '',
-        firstName: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
+    })
+
+    const rules = computed(() => {
+      return {
+        lastName: { required },
+        firstName: { required },
+        email: { required, email },
+        password: { required, minLength: minLength(8), maxLength: maxLength(16) },
+        confirmPassword: { required, sameAsPassword: sameAs(state.password) }
       }
+    })
+
+    const v$ = useVuelidate(rules, state)
+
+    return {
+      state,
+      v$
     }
   },
   methods: {
-    registerPost() {
+    registerValidation() {
+      this.v$.$validate()
+    },
+
+    registerSubmit() {
       const user = {
-        'lastName': this.registerData.lastName,
-        'firstName': this.registerData.firstName,
-        'email': this.registerData.email,
-        'password': this.registerData.password,
-        'confirmPassword': this.registerData.confirmPassword
+        'lastName': this.state.lastName,
+        'firstName': this.state.firstName,
+        'email': this.state.email,
+        'password': this.state.password,
+        'confirmPassword': this.state.confirmPassword
       }
 
       axios
@@ -62,12 +99,12 @@ export default {
         .then(res => {
           console.log(res)
           console.log(user)
-          this.registerMessage.message = res.data.message
+          this.message = res.data.message
         })
         .catch(error => {
           console.log(error)
           console.log(user)
-          this.registerMessage.message = 'Le formulaire doit être correctement remplis !'
+          this.message = 'Le formulaire doit être correctement remplis !'
         })
     }
   }
@@ -75,28 +112,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.flex {
-  display: flex;
-
-  &_row {
-    flex-direction: row;
-  }
-
-  &_column {
-    flex-direction: column;
-  }
-
-  &_between {
-    justify-content: space-between;
-  }
-
-  &_justify--center {
-    justify-content: center;
-  }
-
-  &_align--center {
-    align-items: center;
-  }
+.logo{
+    width: 200px;
+    height: 200px;
 }
 
 form {
@@ -131,6 +149,12 @@ label {
 input {
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.invalid-feedback{
+  margin-left: 10px;
+  color: red;
+  text-align: left;
 }
 
 #submit {

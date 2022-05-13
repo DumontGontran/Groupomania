@@ -20,4 +20,28 @@ export default {
   color: #2c3e50;
   margin-top: 10px;
 }
+
+.flex {
+  display: flex;
+
+  &_row {
+    flex-direction: row;
+  }
+
+  &_column {
+    flex-direction: column;
+  }
+
+  &_between {
+    justify-content: space-between;
+  }
+
+  &_justify--center {
+    justify-content: center;
+  }
+
+  &_align--center {
+    align-items: center;
+  }
+}
 </style>

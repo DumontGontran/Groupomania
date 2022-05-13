@@ -1,20 +1,11 @@
 <template>
+  <img class="logo" src="../assets/logo/icon-above-font.svg" alt="Logo Groupomania" />
   <form class="flex flex_column">
     <h1>Se Connecter</h1>
     <label for="email">Email:</label>
-    <input
-      class="flex flex_justify--center flex_align--center"
-      type="email"
-      name="email"
-      id="email"
-    />
+    <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email" placeholder="doe.john@outlook.fr" />
     <label for="password">Mot de passe:</label>
-    <input
-      class="flex flex_justify--center flex_align--center"
-      type="password"
-      name="password"
-      id="password"
-    />
+    <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password" placeholder="Motdepasse" />
     <div class="navForm flex flex_row flex_between flex_align--center">
       <input type="submit" value="Valider" id="submit" />
       <router-link class="linkForm" to="/register">S'inscrire</router-link>
@@ -25,28 +16,13 @@
 <script>
 export default {
   name: "LoginForm",
-  props: {},
 };
 </script>
 
 <style lang="scss" scoped>
-.flex {
-  display: flex;
-  &_row {
-    flex-direction: row;
-  }
-  &_column {
-    flex-direction: column;
-  }
-  &_between {
-    justify-content: space-between;
-  }
-  &_justify--center {
-    justify-content: center;
-  }
-  &_align--center {
-    align-items: center;
-  }
+.logo{
+    width: 200px;
+    height: 200px;
 }
 
 form {
@@ -83,6 +59,12 @@ input {
   margin-right: 10px;
 }
 
+.invalid-feedback{
+  margin-left: 10px;
+  color: red;
+  text-align: left;
+}
+
 #submit {
   background-color: white;
   color: black;
@@ -91,6 +73,7 @@ input {
   border-radius: 5px 5px 5px 5px;
   width: 150px;
   height: 50px;
+
   &:hover {
     border: 1px solid red;
     color: red;
@@ -108,8 +91,20 @@ input {
 .linkForm {
   color: red;
   text-decoration: none;
+
   &:hover {
     font-weight: bold;
+  }
+}
+
+.message {
+  margin-top: 0;
+  color: red;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: black;
   }
 }
 </style>

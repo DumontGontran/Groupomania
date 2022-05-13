@@ -1,6 +1,6 @@
 <template>
   <header>
-    <img class="logo" src="../assets/logo/icon-above-font.png" alt="Logo Groupomania"/>
+    <img class="logo" src="../assets/logo/icon-left-font.svg" alt="Logo Groupomania"/>
   </header>
 </template>
 
@@ -11,7 +11,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+header{
+border-bottom: 1px solid black;
+}
+
 .logo{
     width: 200px;
     height: 200px;
