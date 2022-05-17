@@ -1,7 +1,10 @@
 <template>
-  <header class="flex flex-row flex-between">
-    <img class="logo" src="../assets/logo/icon-left-font.svg" alt="Logo Groupomania"/>
-    <ul class="flex flex-row">
+  <header class="flex flex_row flex_between">
+    <div class="flex flex_row flex_align--center">
+    <img class="logo" src="../assets/logo/icon.svg" alt="Logo Groupomania"/>
+    <h1>Groupomania</h1>
+    </div>
+    <ul class="flex flex_row flex_align--center">
       <li><router-link class="navLink" to="/public_feed">Fil d'actualité</router-link></li>
       <li><router-link class="navLink" to="/personal_feed">Fil personnel</router-link></li>
       <li><router-link class="navLink" to="/profil">Profil</router-link></li>
@@ -12,7 +15,7 @@
 
 <script>
 export default {
-  name: "Header",
+  name: "Content_Header",
 };
 </script>
 
@@ -22,8 +25,17 @@ border-bottom: 1px solid black;
 }
 
 .logo{
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 80px;
+}
+
+h1 {
+  font-size: 20px;
+  color: red;
+}
+
+ ul {
+  list-style: none;
 }
 
 .navLink{
@@ -36,7 +48,7 @@ border-bottom: 1px solid black;
   &:hover{
     text-decoration: underline;
     text-decoration-color: red;
-    text-decoration-thickness: 50%;
+    text-decoration-thickness: 30%;
   }
 }
 </style>

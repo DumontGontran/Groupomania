@@ -1,4 +1,4 @@
-class User {
+class RegisterUser {
     constructor(options){
        this.firstName = options.firstName || "";
        this.lastName = options.lastName || "";
@@ -7,4 +7,4 @@ class User {
     }
  }
 
- module.exports = User;
+ module.exports = RegisterUser;

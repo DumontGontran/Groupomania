@@ -1,7 +1,6 @@
 <template>
-  <img class="logo" src="../assets/logo/icon-above-font.svg" alt="Logo Groupomania"/>
   <form class="flex flex_column">
-    <h2>S'inscrire</h2>
+    <h2>Profil</h2>
     <label for="lastName">Nom:</label>
     <input class="flex flex_justify--center flex_align--center" type="text" name="lastName" id="lastName"
       v-model="state.lastName" :class="{ 'is-invalid': state.lastName.$error }" placeholder="Doe"
@@ -19,7 +18,7 @@
     <label for="email">Email:</label>
     <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
       v-model="state.email" :class="{ 'is-invalid': state.email.$error }" placeholder="doe.john@outlook.fr"
-      v-on:keyup.prevent="registerValidation" />
+      disabled v-on:keyup.prevent="registerValidation" />
     <div class="invalid-feedback">
       <p v-if="v$.email.$error">{{ v$.email.$errors[0].$message }}</p>
     </div>
@@ -37,9 +36,8 @@
     <div class="invalid-feedback">
       <p v-if="v$.confirmPassword.$error">{{ v$.confirmPassword.$errors[0].$message }}</p>
     </div>
-    <div class="navForm flex flex_row flex_between flex_align--center">
+    <div class="navForm flex flex_align--center">
       <input type="submit" value="Valider" id="submit" v-bind:disabled="v$.$invalid" v-on:click.prevent="registerSubmit" />
-      <router-link class="linkForm" to="/login">Se Connecter</router-link>
     </div>
     <p class="message">{{ state.message }}</p>
   </form>
@@ -118,6 +116,7 @@ export default {
 
 form {
   margin: auto;
+  margin-top: 20px;
   padding: 0 0;
   border: 3px solid black;
   border-radius: 10px 10px 10px 10px;

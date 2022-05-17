@@ -1,6 +1,9 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Login from "./views/Login.vue"
 import Register from "./views/Register.vue"
+import Public_Feed from "./views/Public_Feed.vue"
+import Personal_Feed from "./views/Personal_Feed.vue"
+import Profil from "./views/Profil.vue"
 export default createRouter ({ 
     history: createWebHistory(),
     routes: [
@@ -19,9 +22,19 @@ export default createRouter ({
             component: Register
         },
         {
-        path: "/api/user/register",
-        name: "registerUser",
-        component: Register
-        }
+        path: "/public_feed",
+        name: "public_feed",
+        component: Public_Feed
+        },
+        {
+        path: "/personal_feed",
+        name: "personal_feed",
+        component: Personal_Feed
+        },
+        {
+            path: "/profil",
+            name: "profil",
+            component: Profil
+            }
     ]
 })

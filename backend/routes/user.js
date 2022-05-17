@@ -6,6 +6,6 @@ const schema = require('../schemas/user')
 const bodyValidation = require('../middleware/bodyValidation');
 
 router.post('/register', bodyValidation(schema.register), userCtrl.register);
-/* router.post('/login', userCtrl.login); */
+router.post('/login', bodyValidation(schema.login), userCtrl.login);
 
 module.exports = router;
