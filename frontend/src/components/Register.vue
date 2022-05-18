@@ -100,6 +100,9 @@ export default {
           console.log(res)
           console.log(user)
           this.state.message = res.data.message
+          setTimeout(() => {
+          window.location.href = 'http://localhost:8080/login'
+          }, 1000)
         })
         .catch(error => {
           console.log(error)

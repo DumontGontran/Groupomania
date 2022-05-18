@@ -54,6 +54,9 @@ exports.login = async (req, res) => {
         }
         return res.status(200).json({
           userId: results[0]._id,
+          lastName: results[0].lastName,
+          firstName: results[0].firstName,
+          email: results[0].email,
           token: jwt.sign(
             { userId: results[0]._id },
             `${process.env.SECRET_TOKEN}`,
@@ -62,6 +65,24 @@ exports.login = async (req, res) => {
         });
       });
     });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.profil = async (req, res) => {
+  try {
+    const newUser = new RegisterUser(req.body);
+
+    if (req.body.confirmPassword !== newUser.password) {
+      throw res.status(409).json({ message: 'Les mots de passe doivent être identiques !' });
+    } else {
+      const hash = await bcrypt.hash(newUser.password, 10);
+      connection.query(`UPDATE user SET lastName = ?, firstName = ?, email = ?, password = ? WHERE email = ${newUser.email}`, [newUser.lastName, newUser.firstName, newUser.email, hash]);
+      return res.status(201).json({ message: 'Inscription réussie !' });
+    }
   }
   catch (error) {
     console.error(error);

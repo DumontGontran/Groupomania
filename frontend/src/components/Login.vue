@@ -20,6 +20,7 @@
       <input type="submit" value="Valider" id="submit" v-bind:disabled="v$.$invalid" v-on:click.prevent="loginSubmit" />
       <router-link class="linkForm" to="/register">S'inscrire</router-link>
     </div>
+    <p class="message">{{ state.message }}</p>
   </form>
 </template>
 
@@ -34,7 +35,8 @@ export default {
    setup() {
     const state = reactive({
       email: '',
-      password: ''
+      password: '',
+      message: ''
     })
 
     const rules = computed(() => {
@@ -67,11 +69,16 @@ export default {
         .then(res => {
           console.log(res)
           console.log(user)
-          window.location.href = 'http://localhost:8080/public_feed'
+          localStorage.setItem('profil', res.request.response)
+          this.state.message = 'Connexion réussie !'
+          setTimeout(() => {
+          window.location.href = 'http://localhost:8080/profil'
+          }, 1000)
         })
         .catch(error => {
           console.log(error)
           console.log(user)
+          this.state.message = error.response.data.message
         })
     }
   }
