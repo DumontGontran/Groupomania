@@ -13,9 +13,9 @@ const connection = mysql.createConnection({
   database: `${process.env.MYSQL_DATABASE}`
 });
 
-connection.connect(function (err) {
-  if (err) {
-    console.error('Connexion MySQL échouée: ' + err.stack);
+connection.connect(function (error) {
+  if (error) {
+    console.error('Connexion MySQL échouée: ' + error.stack);
     return;
   }
   console.error('Connexion MySQL réussie !')
@@ -54,9 +54,6 @@ exports.login = async (req, res) => {
         }
         return res.status(200).json({
           userId: results[0]._id,
-          lastName: results[0].lastName,
-          firstName: results[0].firstName,
-          email: results[0].email,
           token: jwt.sign(
             { userId: results[0]._id },
             `${process.env.SECRET_TOKEN}`,
@@ -72,7 +69,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.profil = async (req, res) => {
+exports.profilUpdate = async (req, res) => {
   try {
     const newUser = new RegisterUser(req.body);
 
@@ -83,6 +80,28 @@ exports.profil = async (req, res) => {
       connection.query(`UPDATE user SET lastName = ?, firstName = ?, email = ?, password = ? WHERE email = ${newUser.email}`, [newUser.lastName, newUser.firstName, newUser.email, hash]);
       return res.status(201).json({ message: 'Inscription réussie !' });
     }
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    let id = req.params.id;
+    let requester_id = req.auth;
+
+    connection.query(`SELECT * FROM user WHERE _id = (?)`, [id], function (_error, results, _fields) {
+      if (results.length !== 1) {
+        return res.status(404).json({ message: 'Aucun compte n\'existe avec cet id !' });
+      }
+      return res.status(200).json({
+        lastName: results[0].lastName,
+        firstName: results[0].firstName,
+        email: results[0].email,
+      });
+    });
   }
   catch (error) {
     console.error(error);

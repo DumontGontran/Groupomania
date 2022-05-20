@@ -1,11 +1,11 @@
 <template>
-<h2>Profil</h2>
+  <h2>Profil</h2>
   <form class="flex flex_column">
     <img class="flex flex_align--center avatar" src="../assets/avatar/avatar.png" alt="Avatar">
     <label for="lastName">Nom:</label>
     <input class="flex flex_justify--center flex_align--center" type="text" name="lastName" id="lastName"
       v-model="state.lastName" :class="{ 'is-invalid': state.lastName.$error }" placeholder="Doe"
-      v-on:keyup.prevent="profilValidation" />
+      v-on:keyup.prevent="profilValidation" >
     <div class="invalid-feedback">
       <p v-if="v$.lastName.$error">{{ v$.lastName.$errors[0].$message }}</p>
     </div>
@@ -18,8 +18,8 @@
     </div>
     <label for="email">Email:</label>
     <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
-      v-model="state.email" :class="{ 'is-invalid': state.email.$error }" placeholder="doe.john@outlook.fr"
-      disabled v-on:keyup.prevent="profilValidation" />
+      v-model="state.email" :class="{ 'is-invalid': state.email.$error }" placeholder="doe.john@outlook.fr" disabled
+      v-on:keyup.prevent="profilValidation" />
     <div class="invalid-feedback">
       <p v-if="v$.email.$error">{{ v$.email.$errors[0].$message }}</p>
     </div>
@@ -38,7 +38,8 @@
       <p v-if="v$.confirmPassword.$error">{{ v$.confirmPassword.$errors[0].$message }}</p>
     </div>
     <div class="navForm flex flex_align--center flex_justify--center">
-      <input type="submit" value="Valider" id="submit" v-bind:disabled="v$.$invalid" v-on:click.prevent="profilSubmitUpdate" />
+      <input type="submit" value="Valider" id="submit" v-bind:disabled="v$.$invalid"
+        v-on:click.prevent="profilSubmitUpdate" />
     </div>
     <!-- <p class="message">{{ state.message }}</p> -->
   </form>
@@ -49,12 +50,14 @@ import axios from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email, sameAs } from '@vuelidate/validators'
 import { reactive, computed } from 'vue'
+import UserService from "../services/user";
 
 export default {
   name: "RegisterForm",
   setup() {
     const state = reactive({
-      lastName: localStorage.getItem('profil'),
+      user: null,
+      lastName: '',
       firstName: '',
       email: '',
       password: '',
@@ -79,6 +82,11 @@ export default {
       v$
     }
   },
+  async mounted() {
+    let paramsurl_id = localStorage.getItem('user').split(':')[1].split(',')[0]
+
+    this.user = await UserService.get(paramsurl_id) 
+  },
   methods: {
     profilValidation() {
       this.v$.$validate()
@@ -94,7 +102,7 @@ export default {
       }
 
       axios
-        .put('http://localhost:3000/api/user/profil', user)
+        .put(`http://localhost:3000/api/user/profil/:id`, user)
         .then(res => {
           console.log(res)
           console.log(user)
@@ -110,12 +118,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.logo{
-    width: 200px;
-    height: 200px;
+.logo {
+  width: 200px;
+  height: 200px;
 }
 
-.avatar{
+.avatar {
   width: 100px;
   height: 100px;
   margin-top: 10px;
@@ -123,7 +131,8 @@ export default {
   margin-right: auto;
   border: 1px solid black;
   border-radius: 50px 50px 50px 50px;
-  &:hover{
+
+  &:hover {
     border: 1px solid red;
     box-shadow: 0px 1px 10px red;
 
@@ -157,12 +166,13 @@ label {
 input {
   margin-left: 10px;
   margin-right: 10px;
+
   &:disabled {
     background-color: lightgrey;
   }
 }
 
-.invalid-feedback{
+.invalid-feedback {
   margin-left: 10px;
   color: red;
   text-align: left;
@@ -178,14 +188,17 @@ input {
   border-radius: 5px 5px 5px 5px;
   width: 150px;
   height: 50px;
+
   &:disabled {
     background-color: lightgrey;
+
     &:hover {
       border: 1px solid black;
       color: black;
       box-shadow: none;
     }
   }
+
   &:hover {
     border: 1px solid red;
     color: red;
@@ -195,7 +208,7 @@ input {
 
 .navForm {
   margin-top: 20px;
-  margin-left:0;
+  margin-left: 0;
   margin-right: 0;
   margin-bottom: 20px;
 }

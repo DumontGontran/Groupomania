@@ -69,7 +69,7 @@ export default {
         .then(res => {
           console.log(res)
           console.log(user)
-          localStorage.setItem('profil', res.request.response)
+          localStorage.setItem('user', res.request.response)
           this.state.message = 'Connexion réussie !'
           setTimeout(() => {
           window.location.href = 'http://localhost:8080/profil'
