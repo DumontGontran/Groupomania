@@ -32,7 +32,7 @@ export default createRouter ({
         component: Personal_Feed
         },
         {
-            path: "/profil",
+            path: "/profil/",
             name: "profil",
             component: Profil
             }
