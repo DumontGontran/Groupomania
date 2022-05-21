@@ -4,17 +4,18 @@ const API_URL = 'http://localhost:3000/api/';
 
 export default {
     header() {
+        const token = localStorage.getItem('token')
         return {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user').split('"')[5]
+                'Authorization': `Bearer ${token}`
             }
         }
     },
 
     async getOneUser(userId) {
         try {
-            const res = await axios.get(API_URL + 'user/profil/' + userId, this.header());
-            return res
+            const res = await axios.get(API_URL + 'user/profil/' + userId, this.header())
+            return res.data
         } catch (error) {
             return error
         }

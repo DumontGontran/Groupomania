@@ -1,4 +1,5 @@
 <template>
+<div>
   <img class="logo" src="../assets/logo/icon-above-font.svg" alt="Logo Groupomania" />
   <form class="flex flex_column">
     <h2>Se Connecter</h2>
@@ -22,6 +23,7 @@
     </div>
     <p class="message">{{ state.message }}</p>
   </form>
+  </div>
 </template>
 
 <script>
@@ -69,7 +71,8 @@ export default {
         .then(res => {
           console.log(res)
           console.log(user)
-          localStorage.setItem('user', res.request.response)
+          localStorage.setItem('userId', parseInt(res.data.userId))
+          localStorage.setItem('token', res.data.token)
           this.state.message = 'Connexion réussie !'
           setTimeout(() => {
           window.location.href = 'http://localhost:8080/profil'

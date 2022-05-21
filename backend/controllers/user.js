@@ -73,11 +73,14 @@ exports.profilUpdate = async (req, res) => {
   try {
     const newUser = new RegisterUser(req.body);
 
+    if(req.body.password !== '' || newUser.password !== ''){
+
+    }
     if (req.body.confirmPassword !== newUser.password) {
       throw res.status(409).json({ message: 'Les mots de passe doivent être identiques !' });
     } else {
       const hash = await bcrypt.hash(newUser.password, 10);
-      connection.query(`UPDATE user SET lastName = ?, firstName = ?, email = ?, password = ? WHERE email = ${newUser.email}`, [newUser.lastName, newUser.firstName, newUser.email, hash]);
+      connection.query(`UPDATE user SET lastName = ?, firstName = ?, password = ? WHERE email = ${newUser.email}`, [newUser.lastName, newUser.firstName, hash]);
       return res.status(201).json({ message: 'Inscription réussie !' });
     }
   }
@@ -90,17 +93,16 @@ exports.profilUpdate = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     let id = req.params.id;
-    let requester_id = req.auth;
 
     connection.query(`SELECT * FROM user WHERE _id = (?)`, [id], function (_error, results, _fields) {
       if (results.length !== 1) {
         return res.status(404).json({ message: 'Aucun compte n\'existe avec cet id !' });
       }
-      return res.status(200).json({
+      return res.status(200).json([{
         lastName: results[0].lastName,
         firstName: results[0].firstName,
         email: results[0].email,
-      });
+      }]);
     });
   }
   catch (error) {

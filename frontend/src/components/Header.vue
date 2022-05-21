@@ -6,7 +6,6 @@
     </div>
     <ul class="flex flex_row flex_align--center">
       <li><router-link class="navLink" to="/public_feed">Fil d'actualité</router-link></li>
-      <li><router-link class="navLink" to="/personal_feed">Fil personnel</router-link></li>
       <li><router-link class="navLink" to="/profil">Profil</router-link></li>
       <li><router-link class="navLink" to="/login" v-on:click.prevent="logout">Déconnexion</router-link></li>
     </ul>

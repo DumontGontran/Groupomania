@@ -1,26 +1,24 @@
 <template>
   <h2>Profil</h2>
-  <form class="flex flex_column">
+  <form class="flex flex_column" v-for="user in users" :key="user.id">
     <img class="flex flex_align--center avatar" src="../assets/avatar/avatar.png" alt="Avatar">
-    <div v-for="user in users" :key="user.id">
-      <label for="lastName">Nom:</label>
-      <input class="flex flex_justify--center flex_align--center" type="text" name="lastName" id="lastName"
-        v-model="user.lastName" placeholder="Doe" v-on:keyup.prevent="profilValidation">
-      <div class="invalid-feedback">
-        <!-- <p v-if="v$.lastName.$error">{{ v$.lastName.$errors[0].$message }}</p> -->
-      </div>
-      <label for="firstName">Prénom:</label>
-      <input class="flex flex_justify--center flex_align--center" type="text" name="firstName" id="firstName"
-        v-model="user.firstName" placeholder="John" v-on:keyup.prevent="profilValidation" />
-      <div class="invalid-feedback">
-        <!-- <p v-if="v$.firstName.$error">{{ v$.firstName.$errors[0].$message }}</p> -->
-      </div>
-      <label for="email">Email:</label>
-      <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
-        v-model="user.email" placeholder="doe.john@outlook.fr" disabled v-on:keyup.prevent="profilValidation" />
-      <div class="invalid-feedback">
-        <!-- <p v-if="v$.email.$error">{{ v$.email.$errors[0].$message }}</p> -->
-      </div>
+    <label for="lastName">Nom:</label>
+    <input class="flex flex_justify--center flex_align--center" type="text" name="lastName" id="lastName"
+      v-model="user.lastName" placeholder="Doe" v-on:keyup.prevent="profilValidation">
+    <div class="invalid-feedback">
+      <!-- <p v-if="$v.lastName.$error">{{ $v.lastName.$errors[0].$message }}</p> -->
+    </div>
+    <label for="firstName">Prénom:</label>
+    <input class="flex flex_justify--center flex_align--center" type="text" name="firstName" id="firstName"
+      v-model="user.firstName" placeholder="John" v-on:keyup.prevent="profilValidation" />
+    <div class="invalid-feedback">
+      <!-- <p v-if="v$.firstName.$error">{{ v$.firstName.$errors[0].$message }}</p> -->
+    </div>
+    <label for="email">Email:</label>
+    <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
+      v-model="user.email" placeholder="doe.john@outlook.fr" disabled v-on:keyup.prevent="profilValidation" />
+    <div class="invalid-feedback">
+      <!-- <p v-if="v$.email.$error">{{ v$.email.$errors[0].$message }}</p> -->
     </div>
     <label for="password">Mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password"
@@ -37,13 +35,14 @@
     <div class="navForm flex flex_align--center flex_justify--center">
       <input type="submit" value="Valider" id="submit" v-on:click.prevent="profilUpdate" />
     </div>
-    <!-- <p class="message">{{ state.message }}</p> -->
+    <p class="message">{{ message }}</p>
   </form>
 </template>
 
 <script>
 import axios from 'axios'
 import UserService from "../services/user";
+import { required, minLength, maxLength, sameAs } from '@vuelidate/validators'
 
 export default {
   name: "RegisterForm",
@@ -55,30 +54,42 @@ export default {
       message: ''
     }
   },
-  async created() {
-    let userId = localStorage.getItem('user').split(':')[1].split(',')[0]
+  validations: () => {
+    return {
+    user: {
+      lastName: { required },
+      firstName: { required },
+    },
+    password: { minLength: minLength(8), maxLength: maxLength(16) },
+    confirmPassword: { sameAsPassword: sameAs(password) }
+    }
+  },
+  async mounted() {
+    let userId = localStorage.getItem('userId')
 
     this.users = await UserService.getOneUser(userId)
-    console.log(this.users)
+    console.log('Profil', this.users)
   },
   methods: {
 
 
     profilUpdate() {
+      let userId = localStorage.getItem('userId')
+
       const user = {
-        'lastName': this.lastName,
-        'firstName': this.firstName,
-        'email': this.email,
+        'lastName': this.user.lastName,
+        'firstName': this.user.firstName,
+        'email': this.user.email,
         'password': this.password,
         'confirmPassword': this.confirmPassword
       }
 
       axios
-        .put(`http://localhost:3000/api/user/profil/` + uid, user)
+        .put(`http://localhost:3000/api/user/profil/` + userId, user)
         .then(res => {
           console.log(res)
           console.log(user)
-          /* this.state.message = res.data.message */
+          this.message = 'Profil mis à jour !'
         })
         .catch(error => {
           console.log(error)
