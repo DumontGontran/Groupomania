@@ -8,7 +8,7 @@ const auth = require('../middleware/auth');
 
 router.post('/register', bodyValidation(schema.register), userCtrl.register);
 router.post('/login', bodyValidation(schema.login), userCtrl.login);
-router.put('/profil', auth, bodyValidation(schema.register), userCtrl.profilUpdate);
-router.get('/profil/:id', auth, userCtrl.getUser);
+router.patch('/profil/:id', auth, bodyValidation(schema.update), userCtrl.updateOneUser);
+router.get('/profil/:id', auth, userCtrl.getOneUser);
 
 module.exports = router;

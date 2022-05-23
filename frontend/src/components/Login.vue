@@ -7,16 +7,10 @@
     <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
       v-model="state.email" :class="{ 'is-invalid': state.email.$error }" placeholder="doe.john@outlook.fr"
       v-on:keyup.prevent="loginValidation" />
-    <div class="invalid-feedback">
-      <p v-if="v$.email.$error">{{ v$.email.$errors[0].$message }}</p>
-    </div>
     <label for="password">Mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password"
       v-model="state.password" :class="{ 'is-invalid': state.password.$error }" placeholder="Motdepasse"
       v-on:keyup.prevent="loginValidation" />
-    <div class="invalid-feedback">
-      <p v-if="v$.password.$error">{{ v$.password.$errors[0].$message }}</p>
-    </div>
     <div class="navForm flex flex_row flex_between flex_align--center">
       <input type="submit" value="Valider" id="submit" v-bind:disabled="v$.$invalid" v-on:click.prevent="loginSubmit" />
       <router-link class="linkForm" to="/register">S'inscrire</router-link>
@@ -58,6 +52,7 @@ export default {
   methods: {
     loginValidation() {
       this.v$.$validate()
+      this.state.message = ''
     },
 
     loginSubmit() {

@@ -7,21 +7,21 @@
       v-model="state.lastName" :class="{ 'is-invalid': state.lastName.$error }" placeholder="Doe"
       v-on:keyup.prevent="registerValidation" />
     <div class="invalid-feedback">
-      <p v-if="v$.lastName.$error">{{ v$.lastName.$errors[0].$message }}</p>
+      <p v-if="v$.lastName.$error">Nom requis</p>
     </div>
     <label for="firstName">Prénom:</label>
     <input class="flex flex_justify--center flex_align--center" type="text" name="firstName" id="firstName"
       v-model="state.firstName" :class="{ 'is-invalid': state.firstName.$error }" placeholder="John"
       v-on:keyup.prevent="registerValidation" />
     <div class="invalid-feedback">
-      <p v-if="v$.firstName.$error">{{ v$.firstName.$errors[0].$message }}</p>
+      <p v-if="v$.firstName.$error">Prénom requis</p>
     </div>
     <label for="email">Email:</label>
     <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
       v-model="state.email" :class="{ 'is-invalid': state.email.$error }" placeholder="doe.john@outlook.fr"
       v-on:keyup.prevent="registerValidation" />
     <div class="invalid-feedback">
-      <p v-if="v$.email.$error">{{ v$.email.$errors[0].$message }}</p>
+      <p v-if="v$.email.$error">Email valide requis</p>
     </div>
     <label for="password">Mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password"
@@ -107,6 +107,7 @@ export default {
         .catch(error => {
           console.log(error)
           console.log(user)
+          this.state.message = error.response.data.message
         })
     }
   }

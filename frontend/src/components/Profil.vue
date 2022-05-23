@@ -4,9 +4,9 @@
     <img class="flex flex_align--center avatar" src="../assets/avatar/avatar.png" alt="Avatar">
     <label for="lastName">Nom:</label>
     <input class="flex flex_justify--center flex_align--center" type="text" name="lastName" id="lastName"
-      v-model="user.lastName" placeholder="Doe" v-on:keyup.prevent="profilValidation">
+      v-model="user.lastName" placeholder="Doe" v-on:keyup.prevent="profilValidation" />
     <div class="invalid-feedback">
-      <!-- <p v-if="$v.lastName.$error">{{ $v.lastName.$errors[0].$message }}</p> -->
+      <!-- <p v-if="user.lastName.$error">Nom requis</p> -->
     </div>
     <label for="firstName">Prénom:</label>
     <input class="flex flex_justify--center flex_align--center" type="text" name="firstName" id="firstName"
@@ -22,18 +22,18 @@
     </div>
     <label for="password">Mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password"
-      v-model="password" placeholder="Motdepasse" v-on:keyup.prevent="profilValidation" />
+      v-model="user.password" placeholder="Motdepasse" v-on:keyup.prevent="profilValidation" />
     <div class="invalid-feedback">
       <!-- <p v-if="v$.password.$error">{{ v$.password.$errors[0].$message }}</p> -->
     </div>
     <label for="confirmPassword">Confirmer mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="confirmPassword"
-      id="confirmPassword" v-model="confirmPassword" placeholder="Motdepasse" v-on:keyup.prevent="profilValidation" />
+      id="confirmPassword" v-model="user.confirmPassword" placeholder="Motdepasse" v-on:keyup.prevent="profilValidation" />
     <div class="invalid-feedback">
       <!-- <p v-if="v$.confirmPassword.$error">{{ v$.confirmPassword.$errors[0].$message }}</p> -->
     </div>
     <div class="navForm flex flex_align--center flex_justify--center">
-      <input type="submit" value="Valider" id="submit" v-on:click.prevent="profilUpdate" />
+      <input type="submit" value="Valider" id="submit" v-on:click.prevent="updateOneUser" />
     </div>
     <p class="message">{{ message }}</p>
   </form>
@@ -41,7 +41,7 @@
 
 <script>
 import axios from 'axios'
-import UserService from "../services/user";
+import UserService from '../services/user'
 import { required, minLength, maxLength, sameAs } from '@vuelidate/validators'
 
 export default {
@@ -49,19 +49,18 @@ export default {
   data() {
     return {
       users: [],
-      password: '',
-      confirmPassword: '',
       message: ''
     }
   },
-  validations: () => {
-    return {
-    user: {
-      lastName: { required },
-      firstName: { required },
-    },
-    password: { minLength: minLength(8), maxLength: maxLength(16) },
-    confirmPassword: { sameAsPassword: sameAs(password) }
+  validations() {
+    return{
+      user: {
+        lastName: { required },
+        firstName: { required },
+        email: { required, email },
+        password: { required, minLength: minLength(8), maxLength: maxLength(16) },
+        confirmPassword: { required, sameAsPassword: sameAs(this.password) }
+      }
     }
   },
   async mounted() {
@@ -71,25 +70,28 @@ export default {
     console.log('Profil', this.users)
   },
   methods: {
-
-
-    profilUpdate() {
-      let userId = localStorage.getItem('userId')
+   updateOneUser() {
+     let userId = localStorage.getItem('userId')
+     const token = localStorage.getItem('token')
 
       const user = {
-        'lastName': this.user.lastName,
-        'firstName': this.user.firstName,
-        'email': this.user.email,
-        'password': this.password,
-        'confirmPassword': this.confirmPassword
+        'lastName': this.users[0].lastName,
+        'firstName': this.users[0].firstName,
+        'email': this.users[0].email,
+        'password': this.users[0].password,
+        'confirmPassword': this.users[0].confirmPassword
       }
 
       axios
-        .put(`http://localhost:3000/api/user/profil/` + userId, user)
+        .put('http://localhost:3000/api/user/profil/' + userId, user, {
+            headers: {
+                'Authorization': 'Bearer '+ token
+            }
+        })
         .then(res => {
           console.log(res)
           console.log(user)
-          this.message = 'Profil mis à jour !'
+          this.state.message = res.data.message
         })
         .catch(error => {
           console.log(error)
