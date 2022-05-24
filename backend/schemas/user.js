@@ -14,11 +14,13 @@ module.exports = {
         password: yup.string().min(8).max(16).required()
     }),
 
-    update: yup.object({
+    profil: yup.object({
         lastName: yup.string().required(),
-        firstName: yup.string().required(),
-        email: yup.string().email().required(),
+        firstName: yup.string().required()
+    }),
+
+    password: yup.object({
         password: yup.string().min(8).max(16).required(),
         confirmPassword: yup.string().min(8).max(16).required()
-    })
+    }),
 };

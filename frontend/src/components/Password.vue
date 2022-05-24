@@ -1,68 +1,57 @@
 <template>
   <h2>Profil</h2>
-  <form class="flex flex_column" v-for="user in users" :key="user.id">
-    <h3>Gestion du Profil</h3>
-    <img class="flex flex_align--center avatar" src="../assets/avatar/avatar.png" alt="Avatar">
-    <label for="lastName">Nom:</label>
-    <input class="flex flex_justify--center flex_align--center" type="text" name="lastName" id="lastName"
-      v-model="users[0].lastName" placeholder="Doe" required />
-    <label for="firstName">Prénom:</label>
-    <input class="flex flex_justify--center flex_align--center" type="text" name="firstName" id="firstName"
-      v-model="users[0].firstName" placeholder="John" required />
-    <label for="email">Email:</label>
-    <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
-      v-model="users[0].email" placeholder="doe.john@outlook.fr" disabled />
+  <form class="flex flex_column">
+    <h3>Gestion du mot de passe</h3>
+    <label for="password">Nouveau mot de passe:</label>
+    <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password"
+      v-model="password" placeholder="Motdepasse" />
+    <label for="confirmPassword">Confirmer mot de passe:</label>
+    <input class="flex flex_justify--center flex_align--center" type="password" name="confirmPassword"
+      id="confirmPassword" v-model="confirmPassword" placeholder="Motdepasse" />
     <div class="navForm flex flex_align--center flex_justify--center">
-      <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updateOneProfilUser" />
-      <router-link class="linkForm" to="/profil/password">Gestion du mot de passe</router-link>
+      <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updateOnePasswordUser" />
+      <router-link class="linkForm" to="/profil">Gestion du Profil</router-link>
     </div>
-    <router-link class="linkForm--delete" to="/register" v-on:click.prevent="deleteOneUser">Supprimer le compte utilisateur</router-link>
     <p class="message">{{ message }}</p>
   </form>
 </template>
 
 <script>
 import axios from 'axios'
-import UserService from '../services/user'
 
 export default {
-  name: "ProfilForm",
+  name: "PasswordForm",
   data() {
     return {
-      users: [],
+      password: '',
+      confirmPassword: '',
       message: ''
     }
   },
-  async mounted() {
-    let userId = localStorage.getItem('userId')
-
-    this.users = await UserService.getOneProfilUser(userId)
-    console.log('GET Profil', this.users[0])
-  },
   methods: {
-    updateOneProfilUser() {
+     updateOnePasswordUser() {
       let userId = localStorage.getItem('userId')
       const token = localStorage.getItem('token')
 
-      const user = {
-        'lastName': this.users[0].lastName,
-        'firstName': this.users[0].firstName
+      const password = {
+        'password': this.password,
+        'confirmPassword': this.confirmPassword
       }
 
       axios
-        .patch('http://localhost:3000/api/user/profil/' + userId, user, {
+        .patch('http://localhost:3000/api/user/profil/password/' + userId, password, {
           headers: {
             'Authorization': 'Bearer ' + token
           }
         })
         .then(res => {
           console.log('API Response', res)
-          console.log('Update Send', user)
+          console.log('Update Send', password)
           this.message = res.data.message
         })
         .catch(error => {
           console.log('API Error', error)
-          console.log('Update to Send', user)
+          console.log('Update to Send', password)
         })
     }
   }
@@ -176,14 +165,6 @@ input {
 
   &:hover {
     font-weight: bold;
-  }
-
-  &--delete{
-    color: darkblue;
-
-    &:hover {
-      font-weight: bold;
-    }
   }
 }
 

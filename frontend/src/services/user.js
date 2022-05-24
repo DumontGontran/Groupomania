@@ -12,7 +12,7 @@ export default {
         }
     },
 
-    async getOneUser(userId) {
+    async getOneProfilUser(userId) {
         try {
             const res = await axios.get(API_URL + '/user/profil/' + userId, this.header())
             return res.data
@@ -20,15 +20,4 @@ export default {
             return error
         }
     },
-
-    async updateOneUser(){
-        try{
-            let userId = localStorage.getItem('userId')
-            const res = await axios.put(API_URL + '/user/profil/' + userId, this.header())
-            return console.log(res)
-        }
-        catch(error){
-            return console.log(error)
-        }
-    }
 }

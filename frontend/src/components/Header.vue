@@ -4,7 +4,7 @@
     <img class="logo" src="../assets/logo/icon.svg" alt="Logo Groupomania"/>
     <h1>Groupomania</h1>
     </div>
-    <ul class="flex flex_row flex_align--center">
+    <ul class="flex flex_column">
       <li><router-link class="navLink" to="/public_feed">Fil d'actualité</router-link></li>
       <li><router-link class="navLink" to="/profil">Profil</router-link></li>
       <li><router-link class="navLink" to="/login" v-on:click.prevent="logout">Déconnexion</router-link></li>
@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name: "Content_Header",
+  name: "Header",
   methods:{
     logout(){
       localStorage.clear()
@@ -42,6 +42,11 @@ h1 {
   list-style: none;
 }
 
+li {
+  text-align: right;
+  padding-bottom: 10px;
+}
+
 .navLink{
   margin: 0;
   padding:0;
@@ -49,6 +54,7 @@ h1 {
   margin-left: 50px;
   text-decoration: none;
   color: black;
+  font-weight: bold;
   &:hover{
     text-decoration: underline;
     text-decoration-color: red;

@@ -36,12 +36,22 @@ export default {
     justify-content: space-between;
   }
 
-  &_justify--center {
+  &_justify {
+    &--center{
     justify-content: center;
+    }
+    &--right{
+      justify-content: right;
+    }
   }
 
-  &_align--center {
+  &_align {
+    &--center{
     align-items: center;
+    }
+    &--right{
+      align-items: right;
+    }
   }
 }
 </style>

@@ -5,7 +5,8 @@ require('dotenv').config('../.env');
 const mysql = require('mysql2');
 const RegisterUser = require('../types/registerUser');
 const LoginUser = require('../types/loginUser ');
-const UpdateUser = require('../types/updateUser')
+const UpdateProfilUser = require('../types/updateProfilUser')
+const UpdatePasswordUser = require('../types/updatePasswordUser')
 
 const connection = mysql.createConnection({
   host: `${process.env.MYSQL_HOST}`,
@@ -64,7 +65,7 @@ exports.login = async (req, res) => {
           token: jwt.sign(
             { userId: results[0]._id },
             `${process.env.SECRET_TOKEN}`,
-            { expiresIn: '24h' }
+            { expiresIn: '12h' }
           )
         });
       });
@@ -76,17 +77,31 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.updateOneUser = async (req, res) => {
+exports.updateOneProfilUser = async (req, res) => {
   try {
     let _id = req.params.id;
-    const user = new UpdateUser(req.body);
+    const user = new UpdateProfilUser(req.body);
+
+    connection.query(`UPDATE user SET lastName = (?), firstName = (?) WHERE _id = (?)`, [user.lastName, user.firstName, _id]);
+    return res.status(200).json({ message: 'Profil mis à jour !' });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.updateOnePasswordUser = async (req, res) => {
+  try {
+    let _id = req.params.id;
+    const user = new UpdatePasswordUser(req.body);
 
     if (req.body.confirmPassword !== user.password) {
       throw res.status(409).json({ message: 'Les mots de passe doivent être identiques !' });
     } else {
       const hash = await bcrypt.hash(user.password, 10);
-      connection.query(`UPDATE user SET lastName = (?), firstName = (?), email = (?), password = (?) WHERE _id = (?)`, [user.lastName], [user.firstName], [user.email], [hash], [_id]);
-      return res.status(200).json({ message: 'Profil mis à jour !' });
+      connection.query(`UPDATE user SET password = (?) WHERE _id = (?)`, [hash, _id]);
+      return res.status(201).json({ message: ' Mot de passe mis à jour !' });
     }
   }
   catch (error) {
@@ -95,7 +110,7 @@ exports.updateOneUser = async (req, res) => {
   }
 };
 
-exports.getOneUser = async (req, res) => {
+exports.getOneProfilUser = async (req, res) => {
   try {
     let _id = req.params.id;
 
@@ -106,9 +121,7 @@ exports.getOneUser = async (req, res) => {
       return res.status(200).json([{
         lastName: results[0].lastName,
         firstName: results[0].firstName,
-        email: results[0].email,
-        password: '',
-        confirmPassword: ''
+        email: results[0].email
       }]);
     });
   }
