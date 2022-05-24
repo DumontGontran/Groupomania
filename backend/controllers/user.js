@@ -101,7 +101,7 @@ exports.updateOnePasswordUser = async (req, res) => {
     } else {
       const hash = await bcrypt.hash(user.password, 10);
       connection.query(`UPDATE user SET password = (?) WHERE _id = (?)`, [hash, _id]);
-      return res.status(201).json({ message: ' Mot de passe mis à jour !' });
+      return res.status(200).json({ message: ' Mot de passe mis à jour !' });
     }
   }
   catch (error) {

@@ -148,9 +148,9 @@ input {
   }
 
   &:hover {
-    border: 1px solid red;
-    color: red;
-    box-shadow: 0px 1px 10px red;
+    border: 1px solid darkblue;
+    color: darkblue;
+    box-shadow: 0px 1px 10px darkblue;
   }
 }
 
@@ -160,7 +160,7 @@ input {
 }
 
 .linkForm {
-  color: red;
+  color: darkblue;
   text-decoration: none;
 
   &:hover {
@@ -170,7 +170,7 @@ input {
 
 .message {
   margin-top: 0;
-  color: red;
+  color: darkblue;
   font-weight: bold;
 
   &:hover {
