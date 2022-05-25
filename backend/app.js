@@ -5,6 +5,7 @@ const app = express();
 const path = require('path');
 
 const userRoutes = require('./routes/user');
+const postRoutes = require('./routes/public_feed');
 
 app.use(express.json());
 
@@ -18,5 +19,6 @@ app.use((req, res, next) => {
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/user', userRoutes);
+app.use('/api/public_feed', postRoutes);
 
 module.exports = app;

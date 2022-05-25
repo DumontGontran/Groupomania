@@ -1,9 +1,9 @@
 <template>
   <header class="flex flex_row flex_between">
-    <div class="flex flex_row flex_align--center">
+    <router-link to="/public_feed" class="flex flex_row flex_align--center navLink--logo">
     <img class="logo" src="../assets/logo/icon.svg" alt="Logo Groupomania"/>
     <h1>Groupomania</h1>
-    </div>
+    </router-link>
     <ul class="flex flex_column">
       <li><router-link class="navLink" to="/public_feed">Fil d'actualité</router-link></li>
       <li><router-link class="navLink" to="/profil">Profil</router-link></li>
@@ -55,6 +55,9 @@ li {
   text-decoration: none;
   color: black;
   font-weight: bold;
+  &--logo{
+    text-decoration: none;
+  }
   &:hover{
     text-decoration: underline;
     text-decoration-color: red;

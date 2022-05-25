@@ -81,7 +81,7 @@ export default {
   margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid black;
+  border: 2px solid black;
   border-radius: 50px 50px 50px 50px;
 
   &:hover {
