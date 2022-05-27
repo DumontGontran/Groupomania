@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3000/api/user';
 
 export default {
     header() {
@@ -14,7 +14,7 @@ export default {
 
     async getOneProfilUser(userId) {
         try {
-            const res = await axios.get(API_URL + '/user/profil/' + userId, this.header())
+            const res = await axios.get(API_URL + '/profil/' + userId, this.header())
             return res.data
         } catch (error) {
             return error

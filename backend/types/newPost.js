@@ -3,7 +3,6 @@ class newPost {
        this.text = options.text || "";
        this.file = options.file || "";
        this.userId = options.userId || "";
-       this.like = options.like || "";
     }
  }
 

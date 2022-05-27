@@ -1,15 +1,15 @@
 <template>
     <Header />
-    <Public_Feed />
+    <Feed />
 </template>
 <script>
 import Header from "../components/Header.vue"
-import Public_Feed from "../components/Public_Feed.vue"
+import Feed from "../components/Feed.vue"
 export default {
-    name: "Public_FeedView",
+    name: "FeedView",
     components: {
         Header,
-        Public_Feed
+        Feed
     }
 }
 </script>

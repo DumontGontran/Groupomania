@@ -1,15 +1,30 @@
 <template>
+<section>
 <h2>Fil d'actualité</h2>
-<form class="flex flex_column">
+<form class="flex flex_column" v-on:submit.prevent="sendPost" enctype="multipart/form-data">
 <label for="create_post">Créer une publication</label>
 <textarea type="text" rows="5" name="create_post" id="create_post" placeholder="Tapez votre message ici" v-model="text"></textarea>
 <div class="navForm flex flex_row flex_between buttons_form">
   <label for="file" hidden>Sélectionnez une image à publier</label>
-  <input type="file" id="file" name="file" accept="image/*" v-on:change.prevent="selectedFile(event)"/>
-  <input type="submit" value="Publier" id="submit" v-on:cliçk.prevent="sendPost">
+  <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg" v-on:change="selectedFile"/>
+  <input type="submit" value="Publier" id="submit">
 </div>
 </form>
-<section class="public_feed">
+</section>
+<!-- <section class="flex flex_column feed">
+<div class="flex flex_column">
+  <div>
+<span v-model="user.lastName"></span> lastName of post creator
+<span v-model="user.firstName"></span> firstName of post creator
+  </div>
+<p v-model="post.date"></p> Date of post
+</div>
+<div>
+<p v-model=""></p> text of post
+<img v-model=""> file of post
+</div>
+</section> -->
+<section class="flex flex_column">
 
 </section>
 </template>
@@ -18,44 +33,45 @@
 import axios from 'axios'
 
 export default {
-  name: "Public_Feed",
+  name: "Feed",
   data() {
     return{
       text: '',
       file: '',
-      like: '0'
+      like: 0
     }
+  },
+  async mounted(){
+
   },
   methods:{
     selectedFile(event){
       this.file = event.target.files[0]
+      console.log('File to Send', this.file)
     },
     sendPost(){
       const userId = localStorage.getItem('userId')
       const token = localStorage.getItem('token')
 
-      const newPost = {
-        'text': this.text,
-        'file': this.file,
-        'userId': userId,
-        'like': this.like
-      }
-
-      console.log('Post to send', newPost)
+      const newPost = new FormData()
+      newPost.append('text', this.text)
+      newPost.append('file', this.file)
+      newPost.append('userId', parseInt(userId))
 
       axios
-        .post('http://localhost:3000/api/public_feed/post', newPost, {
+        .post('http://localhost:3000/api/public_feed/', newPost, {
           headers: {
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token,
+            'content-type': 'multipart/form-data'
           }
         })
         .then(res => {
           console.log('API Response', res)
-          console.log('Post Send', post)
+          console.log('Post Send', newPost)
         })
         .catch(error => {
           console.log('API Error', error)
-          console.log('Post to Send', post)
+          console.log('Post to Send', newPost)
         })
     }
   }

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 require('dotenv').config('../.env');
 const mysql = require('mysql2');
-const NewPost = require('../types/newPost');
+/* const NewPost = require('../types/newPost'); */
 
 const connection = mysql.createConnection({
   host: `${process.env.MYSQL_HOST}`,
@@ -16,23 +16,17 @@ connection.connect(function (error) {
     console.error('Connexion MySQL échouée: ' + error.stack);
     return;
   }
-  console.error('Connexion MySQL réussie !')
 });
 
 exports.newPost = async (req, res) => {
   try {
-    const newPost = new NewPost({
-      text: req.body.text,
-      file: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-      userId: req.body.userId,
-      like: req.body.like
-    });
+        const text = req.body.text;
+        const file = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+        const userId = req.body.userId;
 
-    await newPost.save();
 
-    connection.query(`INSERT INTO posts (text, file, UserId, like) VALUES (?,?,?,?)`, [newPost.text, newPost.file, newPost.userId, newPost.like]);
-    return res.status(201).json({ message: 'Publication réussie !' });
-
+      connection.query(`INSERT INTO posts (text, file, UserId) VALUES (?,?,?)`, [text, file, userId]);
+      return res.status(201).json({ message: 'Publication réussie !' });
   }
   catch (error) {
     console.error(error);

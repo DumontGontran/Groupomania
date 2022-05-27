@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Login from "./views/Login.vue"
 import Register from "./views/Register.vue"
-import Public_Feed from "./views/Public_Feed.vue"
+import Feed from "./views/Feed.vue"
 import Profil from "./views/Profil.vue"
 import Password from "./views/Password.vue"
 
@@ -23,9 +23,9 @@ export default createRouter({
             component: Register
         },
         {
-            path: "/public_feed",
-            name: "public_feed",
-            component: Public_Feed
+            path: "/feed",
+            name: "feed",
+            component: Feed
         },
         {
             path: "/profil",

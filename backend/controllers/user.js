@@ -79,10 +79,10 @@ exports.login = async (req, res) => {
 
 exports.updateOneProfilUser = async (req, res) => {
   try {
-    let _id = req.params.id;
+    let userId = req.params.id;
     const user = new UpdateProfilUser(req.body);
 
-    connection.query(`UPDATE user SET lastName = (?), firstName = (?) WHERE _id = (?)`, [user.lastName, user.firstName, _id]);
+    connection.query(`UPDATE user SET lastName = (?), firstName = (?) WHERE _id = (?)`, [user.lastName, user.firstName, userId]);
     return res.status(200).json({ message: 'Profil mis à jour !' });
   }
   catch (error) {
@@ -93,14 +93,14 @@ exports.updateOneProfilUser = async (req, res) => {
 
 exports.updateOnePasswordUser = async (req, res) => {
   try {
-    let _id = req.params.id;
+    let userId = req.params.id;
     const user = new UpdatePasswordUser(req.body);
 
     if (req.body.confirmPassword !== user.password) {
       throw res.status(409).json({ message: 'Les mots de passe doivent être identiques !' });
     } else {
       const hash = await bcrypt.hash(user.password, 10);
-      connection.query(`UPDATE user SET password = (?) WHERE _id = (?)`, [hash, _id]);
+      connection.query(`UPDATE user SET password = (?) WHERE _id = (?)`, [hash, userId]);
       return res.status(200).json({ message: ' Mot de passe mis à jour !' });
     }
   }
@@ -112,9 +112,9 @@ exports.updateOnePasswordUser = async (req, res) => {
 
 exports.getOneProfilUser = async (req, res) => {
   try {
-    let _id = req.params.id;
+    let userId = req.params.id;
 
-    connection.query(`SELECT * FROM user WHERE _id = (?)`, [_id], function (_error, results, _fields) {
+    connection.query(`SELECT * FROM user WHERE _id = (?)`, [userId], function (_error, results, _fields) {
       if (results.length !== 1) {
         throw res.status(404).json({ message: 'Aucun compte n\'existe avec cet id !' });
       }
