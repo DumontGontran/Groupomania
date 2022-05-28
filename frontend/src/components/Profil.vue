@@ -13,7 +13,7 @@
     <input class="flex flex_justify--center flex_align--center" type="email" name="email" id="email"
       v-model="users[0].email" placeholder="doe.john@outlook.fr" disabled />
     <div class="navForm flex flex_align--center flex_justify--center">
-      <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updateOneProfilUser" />
+      <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updateProfil" />
       <router-link class="linkForm" to="/profil/password">Gestion du mot de passe</router-link>
     </div>
     <router-link class="linkForm--delete" to="/register" v-on:click.prevent="deleteOneUser">Supprimer le compte utilisateur</router-link>
@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import UserService from '../services/user'
 
 export default {
@@ -34,36 +33,23 @@ export default {
     }
   },
   async mounted() {
-    let userId = localStorage.getItem('userId')
+    const userId = localStorage.getItem('userId')
 
     this.users = await UserService.getOneProfilUser(userId)
     console.log('GET Profil', this.users[0])
   },
   methods: {
-    updateOneProfilUser() {
-      let userId = localStorage.getItem('userId')
-      const token = localStorage.getItem('token')
-
-      const user = {
-        'lastName': this.users[0].lastName,
-        'firstName': this.users[0].firstName
-      }
-
-      axios
-        .patch('http://localhost:3000/api/user/profil/' + userId, user, {
-          headers: {
-            'Authorization': 'Bearer ' + token
-          }
-        })
-        .then(res => {
-          console.log('API Response', res)
-          console.log('Update Send', user)
-          this.message = res.data.message
-        })
-        .catch(error => {
-          console.log('API Error', error)
-          console.log('Update to Send', user)
-        })
+    updateProfil() {
+      const userId = localStorage.getItem('userId')
+      
+      UserService.updateOneProfilUser(this.users[0], userId)
+      .then(res => {
+      this.message = 'Profil mis à jour !'
+      setTimeout(() => {
+          window.location.href = 'http://localhost:8080/profil'
+          }, 1000)
+      }),
+      console.log('UPDATE Profil', this.users[0])
     }
   }
 }

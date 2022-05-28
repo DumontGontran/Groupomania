@@ -70,7 +70,7 @@ export default {
           localStorage.setItem('token', res.data.token)
           this.state.message = 'Connexion réussie !'
           setTimeout(() => {
-          window.location.href = 'http://localhost:8080/profil'
+          window.location.href = 'http://localhost:8080/feed'
           }, 1000)
         })
         .catch(error => {

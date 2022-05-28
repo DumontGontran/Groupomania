@@ -1,17 +1,18 @@
 <template>
-<section>
-<h2>Fil d'actualité</h2>
-<form class="flex flex_column" v-on:submit.prevent="sendPost" enctype="multipart/form-data">
-<label for="create_post">Créer une publication</label>
-<textarea type="text" rows="5" name="create_post" id="create_post" placeholder="Tapez votre message ici" v-model="text"></textarea>
-<div class="navForm flex flex_row flex_between buttons_form">
-  <label for="file" hidden>Sélectionnez une image à publier</label>
-  <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg" v-on:change="selectedFile"/>
-  <input type="submit" value="Publier" id="submit">
-</div>
-</form>
-</section>
-<!-- <section class="flex flex_column feed">
+  <section>
+    <h2>Fil d'actualité</h2>
+    <form class="flex flex_column" v-on:submit.prevent="sendPost" enctype="multipart/form-data">
+      <label for="create_post">Créer une publication</label>
+      <textarea type="text" rows="5" name="create_post" id="create_post" placeholder="Tapez votre message ici"
+        v-model="text"></textarea>
+      <div class="navForm flex flex_row flex_between buttons_form">
+        <label for="file" hidden>Sélectionnez une image à publier</label>
+        <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg" v-on:change="selectedFile" />
+        <input type="submit" value="Publier" id="submit">
+      </div>
+    </form>
+  </section>
+  <!-- <section class="flex flex_column feed">
 <div class="flex flex_column">
   <div>
 <span v-model="user.lastName"></span> lastName of post creator
@@ -24,55 +25,35 @@
 <img v-model=""> file of post
 </div>
 </section> -->
-<section class="flex flex_column">
+  <section class="flex flex_column">
 
-</section>
+  </section>
 </template>
 
 <script>
-import axios from 'axios'
+import UserService from '../services/user'
 
 export default {
   name: "Feed",
   data() {
-    return{
+    return {
       text: '',
       file: '',
       like: 0
     }
   },
-  async mounted(){
+  async mounted() {
 
   },
-  methods:{
-    selectedFile(event){
+  methods: {
+    selectedFile(event) {
       this.file = event.target.files[0]
       console.log('File to Send', this.file)
     },
-    sendPost(){
+    sendPost() {
       const userId = localStorage.getItem('userId')
-      const token = localStorage.getItem('token')
 
-      const newPost = new FormData()
-      newPost.append('text', this.text)
-      newPost.append('file', this.file)
-      newPost.append('userId', parseInt(userId))
-
-      axios
-        .post('http://localhost:3000/api/public_feed/', newPost, {
-          headers: {
-            'Authorization': 'Bearer ' + token,
-            'content-type': 'multipart/form-data'
-          }
-        })
-        .then(res => {
-          console.log('API Response', res)
-          console.log('Post Send', newPost)
-        })
-        .catch(error => {
-          console.log('API Error', error)
-          console.log('Post to Send', newPost)
-        })
+      UserService.createPost(this.text, this.file, userId)
     }
   }
 }
@@ -80,7 +61,7 @@ export default {
 
 <style lang="scss" scoped>
 h2 {
-  color:black;
+  color: black;
   text-decoration: underline;
   text-decoration-color: red;
   text-decoration-thickness: 20%;
@@ -104,7 +85,8 @@ label {
   color: black;
 }
 
-input, textarea {
+input,
+textarea {
   margin-left: 10px;
   margin-right: 10px;
 }
@@ -132,6 +114,7 @@ input, textarea {
   border-radius: 5px 5px 5px 5px;
   width: 150px;
   height: 25px;
+
   &:hover {
     border: 1px solid darkblue;
     color: darkblue;
