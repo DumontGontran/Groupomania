@@ -9,7 +9,7 @@
     <input class="flex flex_justify--center flex_align--center" type="password" name="confirmPassword"
       id="confirmPassword" v-model="confirmPassword" placeholder="Motdepasse" />
     <div class="navForm flex flex_align--center flex_justify--center">
-      <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updateOnePasswordUser" />
+      <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updatePassword" />
       <router-link class="linkForm" to="/profil">Gestion du Profil</router-link>
     </div>
     <p class="message">{{ message }}</p>
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import UserService from '../services/user'
 
 export default {
   name: "PasswordForm",
@@ -29,30 +29,8 @@ export default {
     }
   },
   methods: {
-     updateOnePasswordUser() {
-      let userId = localStorage.getItem('userId')
-      const token = localStorage.getItem('token')
-
-      const password = {
-        'password': this.password,
-        'confirmPassword': this.confirmPassword
-      }
-
-      axios
-        .patch('http://localhost:3000/api/user/profil/password/' + userId, password, {
-          headers: {
-            'Authorization': 'Bearer ' + token
-          }
-        })
-        .then(res => {
-          console.log('API Response', res)
-          console.log('Update Send', password)
-          this.message = res.data.message
-        })
-        .catch(error => {
-          console.log('API Error', error)
-          console.log('Update to Send', password)
-        })
+     updatePassword() {
+      UserService.updateOnePasswordUser(this.password, this.confirmPassword)
     }
   }
 }

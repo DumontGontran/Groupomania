@@ -4,7 +4,7 @@
     <form class="flex flex_column" v-on:submit.prevent="sendPost" enctype="multipart/form-data">
       <label for="create_post">Créer une publication</label>
       <textarea type="text" rows="5" name="create_post" id="create_post" placeholder="Tapez votre message ici"
-        v-model="text"></textarea>
+        v-model="text" minlength="2"></textarea>
       <div class="navForm flex flex_row flex_between buttons_form">
         <label for="file" hidden>Sélectionnez une image à publier</label>
         <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg" v-on:change="selectedFile" />
@@ -51,9 +51,7 @@ export default {
       console.log('File to Send', this.file)
     },
     sendPost() {
-      const userId = localStorage.getItem('userId')
-
-      UserService.createPost(this.text, this.file, userId)
+      UserService.createPost(this.text, this.file)
     }
   }
 }

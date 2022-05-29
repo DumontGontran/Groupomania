@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import UserService from '../services/user'
 import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email, sameAs } from '@vuelidate/validators'
 import { reactive, computed } from 'vue'
@@ -86,29 +86,7 @@ export default {
     },
 
     registerSubmit() {
-      const user = {
-        'lastName': this.state.lastName,
-        'firstName': this.state.firstName,
-        'email': this.state.email,
-        'password': this.state.password,
-        'confirmPassword': this.state.confirmPassword
-      }
-
-      axios
-        .post('http://localhost:3000/api/user/register', user)
-        .then(res => {
-          console.log(res)
-          console.log(user)
-          this.state.message = res.data.message
-          setTimeout(() => {
-          window.location.href = 'http://localhost:8080/login'
-          }, 1000)
-        })
-        .catch(error => {
-          console.log(error)
-          console.log(user)
-          this.state.message = error.response.data.message
-        })
+      UserService.registerOneProfilUser(this.state)
     }
   }
 }

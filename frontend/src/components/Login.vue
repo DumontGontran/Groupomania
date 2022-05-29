@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import UserService from '../services/user'
 import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email } from '@vuelidate/validators'
 import { reactive, computed } from 'vue'
@@ -56,28 +56,7 @@ export default {
     },
 
     loginSubmit() {
-      const user = {
-        'email': this.state.email,
-        'password': this.state.password
-      }
-
-      axios
-        .post('http://localhost:3000/api/user/login', user)
-        .then(res => {
-          console.log(res)
-          console.log(user)
-          localStorage.setItem('userId', parseInt(res.data.userId))
-          localStorage.setItem('token', res.data.token)
-          this.state.message = 'Connexion réussie !'
-          setTimeout(() => {
-          window.location.href = 'http://localhost:8080/feed'
-          }, 1000)
-        })
-        .catch(error => {
-          console.log(error)
-          console.log(user)
-          this.state.message = error.response.data.message
-        })
+      UserService.loginOneProfilUser(this.state)
     }
   }
 }

@@ -33,22 +33,12 @@ export default {
     }
   },
   async mounted() {
-    const userId = localStorage.getItem('userId')
-
-    this.users = await UserService.getOneProfilUser(userId)
+    this.users = await UserService.getOneProfilUser()
     console.log('GET Profil', this.users[0])
   },
   methods: {
     updateProfil() {
-      const userId = localStorage.getItem('userId')
-      
-      UserService.updateOneProfilUser(this.users[0], userId)
-      .then(res => {
-      this.message = 'Profil mis à jour !'
-      setTimeout(() => {
-          window.location.href = 'http://localhost:8080/profil'
-          }, 1000)
-      }),
+      UserService.updateOneProfilUser(this.users[0])
       console.log('UPDATE Profil', this.users[0])
     }
   }

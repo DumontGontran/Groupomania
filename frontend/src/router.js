@@ -1,9 +1,13 @@
-import { createWebHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from "vue-router"
+import { authGuard } from "./helpers/auth-guard"
+
 import Login from "./views/Login.vue"
 import Register from "./views/Register.vue"
 import Feed from "./views/Feed.vue"
 import Profil from "./views/Profil.vue"
 import Password from "./views/Password.vue"
+
+
 
 export default createRouter({
     history: createWebHistory(),
@@ -25,17 +29,20 @@ export default createRouter({
         {
             path: "/feed",
             name: "feed",
-            component: Feed
+            component: Feed,
+            beforeEnter: authGuard
         },
         {
             path: "/profil",
             name: "profil",
-            component: Profil
+            component: Profil,
+            beforeEnter: authGuard
         },
         {
             path: "/profil/password",
             name: "password",
-            component: Password
+            component: Password,
+            beforeEnter: authGuard
         }
 
     ]
