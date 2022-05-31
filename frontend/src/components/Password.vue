@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import UserService from '../services/user'
+import UserService from '../services/user.service'
 
 export default {
   name: "PasswordForm",

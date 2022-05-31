@@ -36,6 +36,9 @@ border-bottom: 2px solid black;
 h1 {
   font-size: 20px;
   color: red;
+  @media screen and (max-width: 460px) {
+    display: none;
+  }
 }
 
  ul {

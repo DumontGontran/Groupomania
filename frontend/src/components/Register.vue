@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import UserService from '../services/user'
+import UserService from '../services/user.service'
 import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email, sameAs } from '@vuelidate/validators'
 import { reactive, computed } from 'vue'

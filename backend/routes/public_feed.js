@@ -8,5 +8,6 @@ const bodyValidation = require('../middleware/bodyValidation');
 const multer = require('../middleware/multer-config');
 
 router.post('/', auth, multer, /* bodyValidation(schema.newPost), */ postCtrl.newPost);
+router.get('/', auth, postCtrl.getAllPost);
 
 module.exports = router;

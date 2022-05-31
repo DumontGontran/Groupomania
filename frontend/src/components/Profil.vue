@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import UserService from '../services/user'
+import UserService from '../services/user.service'
 
 export default {
   name: "ProfilForm",
@@ -33,7 +33,9 @@ export default {
     }
   },
   async mounted() {
-    this.users = await UserService.getOneProfilUser()
+    const userId = localStorage.getItem('userId')
+    
+    this.users = await UserService.getOneProfilUser(userId)
     console.log('GET Profil', this.users[0])
   },
   methods: {

@@ -36,6 +36,10 @@ export default {
     justify-content: space-between;
   }
 
+  &_around {
+    justify-content: space-around;
+  }
+
   &_justify {
     &--center{
     justify-content: center;

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import UserService from '../services/user'
+import UserService from '../services/user.service'
 import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email } from '@vuelidate/validators'
 import { reactive, computed } from 'vue'
@@ -51,8 +51,8 @@ export default {
   },
   methods: {
     loginValidation() {
-      this.v$.$validate()
       this.state.message = ''
+      this.v$.$validate()
     },
 
     loginSubmit() {

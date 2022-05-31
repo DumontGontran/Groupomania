@@ -1,4 +1,4 @@
-import router from '@/router';
+import router from '../router';
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api'
@@ -75,13 +75,15 @@ export default {
             return res.data,
                 console.log(res),
                 console.log(user),
+                message = 'Profil mis à jour !',
                 setTimeout(() => {
                     router.go(0)
                 }, 1000)
         }
         catch (error) {
             return error,
-            console.log(error)
+            console.log(error),
+            router.push('/login')
         }
     },
 
@@ -103,12 +105,13 @@ export default {
         }
     },
 
-    async getOneProfilUser() {
+    async getOneProfilUser(userId) {
         try {
             const res = await axios.get(`${API_URL}/user/profil/${userId}`, this.header())
             return res.data
         } catch (error) {
-            return error
+            return error,
+            router.push('/login')
         }
     },
 
@@ -126,7 +129,18 @@ export default {
             return res.data,
                 router.go(0)
         } catch (error) {
-            return error
+            return error,
+            router.push('/login')
         }
-    }
+    },
+
+    async getAllPost() {
+        try {
+            const res = await axios.get(`${API_URL}/public_feed/`, this.header())
+            return res.data
+        } catch (error) {
+            return error,
+            router.push('/feed')
+        }
+    },
 }
