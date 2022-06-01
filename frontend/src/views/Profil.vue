@@ -66,12 +66,6 @@ export default {
   margin-right: auto;
   border: 2px solid black;
   border-radius: 50px 50px 50px 50px;
-
-  &:hover {
-    border: 2px solid black;
-    box-shadow: 0px 1px 10px darkblue;
-
-  }
 }
 
 form {

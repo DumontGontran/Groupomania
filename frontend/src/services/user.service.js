@@ -146,16 +146,17 @@ export default {
     async createComment(comment, postId) {
         try {
             let header = this.header()
-            header.headers['content-type'] = 'application/x-www-form-urlencoded'
+            header.headers['content-type'] = 'application/json'
 
             const newComment = {
                 'comment': comment,
                 'userId': parseInt(userId),
                 'postId': postId
             }
+
             console.log('Nouveau Commentaire', newComment)
 
-            const res = await axios.post(`${API_URL}/public_feed/${postId}/comment`, newComment, header)
+            const res = await axios.post(`${API_URL}/public_feed/comment`, newComment, header)
             return res.data
         } catch (error) {
             return error

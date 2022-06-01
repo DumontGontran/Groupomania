@@ -8,7 +8,7 @@ const bodyValidation = require('../middleware/bodyValidation'); */
 const multer = require('../middleware/multer-config');
 
 router.post('/', auth, multer, postCtrl.createOnePost);
-router.post('/:id/comment', auth, postCtrl.createOneComment);
+router.post('/comment', auth, postCtrl.createOneComment);
 router.get('/', auth, postCtrl.getAllPost);
 
 module.exports = router;

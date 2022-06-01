@@ -25,7 +25,7 @@
             <p class="post_text">{{ post.text }}</p>
             <img class="post_image flex" :src="post.file" alt="image de publication">
             <div class="flex flex_column flex_align--center flex_around post_foot">
-                <form class="flex flex_column comment_form" v-on:submit.prevent="sendComment(post.postId)" enctype="application/x-www-form-urlencoded">
+                <form class="flex flex_column comment_form" v-on:submit.prevent="sendComment(post.postId)" enctype="application/json">
                     <input type="text" name="create_comment" id="create_comment" placeholder="Commentez ici"
                         v-model="comment">
                     <input class="post_comment_create" id="submit_comment" value="Commenter" type="submit">

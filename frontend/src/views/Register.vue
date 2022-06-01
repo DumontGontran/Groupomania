@@ -28,14 +28,14 @@
       v-model="state.password" :class="{ 'is-invalid': state.password.$error }" placeholder="Motdepasse"
       v-on:keyup.prevent="registerValidation" />
     <div class="invalid-feedback">
-      <p v-if="v$.password.$error">{{ v$.password.$errors[0].$message }}</p>
+      <p v-if="v$.password.$error">Mot de passe requis, doit contenir entre 8 et 16 caractères</p>
     </div>
     <label for="confirmPassword">Confirmer mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="confirmPassword"
       id="confirmPassword" v-model="state.confirmPassword" :class="{ 'is-invalid': state.confirmPassword.$error }"
       placeholder="Motdepasse" v-on:keyup.prevent="registerValidation" />
     <div class="invalid-feedback">
-      <p v-if="v$.confirmPassword.$error">{{ v$.confirmPassword.$errors[0].$message }}</p>
+      <p v-if="v$.confirmPassword.$error">Doit être identique au mot de passe</p>
     </div>
     <div class="navForm flex flex_row flex_between flex_align--center">
       <input type="submit" value="Valider" id="submit" v-bind:disabled="v$.$invalid" v-on:click.prevent="registerSubmit" />

@@ -37,7 +37,7 @@ exports.createOnePost = async (req, res) => {
 exports.getAllPost = async (req, res) => {
   try {
     connection.query(`SELECT postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`, function (_error, results, _fields) {
-        return res.status(200).json(results);
+      return res.status(200).json(results);
     });
   }
   catch (error) {
