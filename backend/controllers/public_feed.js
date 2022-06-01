@@ -18,15 +18,14 @@ connection.connect(function (error) {
   }
 });
 
-exports.newPost = async (req, res) => {
+exports.createOnePost = async (req, res) => {
   try {
     const text = req.body.text;
     const file = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
     const userId = req.body.userId;
     const date = new Date();
 
-
-    connection.query(`INSERT INTO posts (text, file, UserId, date) VALUES (?,?,?,?)`, [text, file, userId, date]);
+    connection.query(`INSERT INTO posts (text, file, userId, date) VALUES (?,?,?,?)`, [text, file, userId, date]);
     return res.status(201).json({ message: 'Publication réussie !' });
   }
   catch (error) {
@@ -37,10 +36,24 @@ exports.newPost = async (req, res) => {
 
 exports.getAllPost = async (req, res) => {
   try {
-    connection.query(`SELECT lastName, firstName, date, text, file, date FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`, function (_error, results, _fields) {
+    connection.query(`SELECT postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`, function (_error, results, _fields) {
         return res.status(200).json(results);
     });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
 
+exports.createOneComment = async (req, res) => {
+  try {
+    const comment = req.body.comment;
+    const userId = req.body.userId;
+    const postId = req.body.postId;
+
+    connection.query(`INSERT INTO comments (comment, userId, postId) VALUES (?,?,?)`, [comment, userId, postId]);
+    return res.status(201).json({ message: 'Commentaire envoyé !' });
   }
   catch (error) {
     console.error(error);

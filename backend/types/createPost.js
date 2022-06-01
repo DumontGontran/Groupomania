@@ -1,4 +1,4 @@
-class newPost {
+class createPost {
     constructor(options){
        this.text = options.text || "";
        this.file = options.file || "";
@@ -6,4 +6,4 @@ class newPost {
     }
  }
 
- module.exports = newPost;
+ module.exports = createPost;

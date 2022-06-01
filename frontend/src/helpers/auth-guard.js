@@ -6,6 +6,5 @@ export function authGuard(to){
     if(token){
         return true
     }
-
     router.push('/login')
 }

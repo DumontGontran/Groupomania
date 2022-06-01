@@ -3,11 +3,12 @@ const router = express.Router();
 
 const postCtrl = require('../controllers/public_feed');
 const auth = require('../middleware/auth');
-const schema = require('../schemas/post');
-const bodyValidation = require('../middleware/bodyValidation');
+/* const schema = require('../schemas/post');
+const bodyValidation = require('../middleware/bodyValidation'); */
 const multer = require('../middleware/multer-config');
 
-router.post('/', auth, multer, /* bodyValidation(schema.newPost), */ postCtrl.newPost);
+router.post('/', auth, multer, postCtrl.createOnePost);
+router.post('/:id/comment', auth, postCtrl.createOneComment);
 router.get('/', auth, postCtrl.getAllPost);
 
 module.exports = router;

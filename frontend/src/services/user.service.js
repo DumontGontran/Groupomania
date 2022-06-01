@@ -25,7 +25,7 @@ export default {
                 'confirmPassword': state.confirmPassword
             }
 
-            const res = await axios.post(`${API_URL}/user/register`, user, this.header())
+            const res = await axios.post(`${API_URL}/user/register`, user)
             return res.data,
                 state.message = 'Inscription réussie !',
                 setTimeout(() => {
@@ -46,7 +46,7 @@ export default {
                 'password': state.password
             }
 
-            const res = await axios.post(`${API_URL}/user/login`, user, this.header())
+            const res = await axios.post(`${API_URL}/user/login`, user)
             return res.data,
                 console.log(res),
                 console.log(user),
@@ -75,15 +75,14 @@ export default {
             return res.data,
                 console.log(res),
                 console.log(user),
-                message = 'Profil mis à jour !',
                 setTimeout(() => {
                     router.go(0)
                 }, 1000)
         }
         catch (error) {
             return error,
-            console.log(error),
-            router.push('/login')
+                console.log(error),
+                router.push('/login')
         }
     },
 
@@ -96,9 +95,9 @@ export default {
 
             const res = await axios.patch(`${API_URL}/user/profil/password/${userId}`, userPassword, this.header())
             return res.data,
-            setTimeout(() => {
-                router.go(0)
-            }, 1000)
+                setTimeout(() => {
+                    router.go(0)
+                }, 1000)
         }
         catch (error) {
             return error
@@ -111,7 +110,7 @@ export default {
             return res.data
         } catch (error) {
             return error,
-            router.push('/login')
+                router.push('/login')
         }
     },
 
@@ -130,7 +129,7 @@ export default {
                 router.go(0)
         } catch (error) {
             return error,
-            router.push('/login')
+                router.push('/login')
         }
     },
 
@@ -140,7 +139,26 @@ export default {
             return res.data
         } catch (error) {
             return error,
-            router.push('/feed')
+                router.go(0)
+        }
+    },
+
+    async createComment(comment, postId) {
+        try {
+            let header = this.header()
+            header.headers['content-type'] = 'application/x-www-form-urlencoded'
+
+            const newComment = {
+                'comment': comment,
+                'userId': parseInt(userId),
+                'postId': postId
+            }
+            console.log('Nouveau Commentaire', newComment)
+
+            const res = await axios.post(`${API_URL}/public_feed/${postId}/comment`, newComment, header)
+            return res.data
+        } catch (error) {
+            return error
         }
     },
 }
