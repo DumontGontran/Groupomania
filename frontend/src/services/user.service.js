@@ -157,9 +157,11 @@ export default {
             console.log('Nouveau Commentaire', newComment)
 
             const res = await axios.post(`${API_URL}/public_feed/comment`, newComment, header)
-            return res.data
+            return res.data,
+            router.go(0)
         } catch (error) {
-            return error
+            return error,
+            router.push('/login')
         }
     },
 

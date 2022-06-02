@@ -68,6 +68,7 @@ form {
   margin-top: 20px;
   padding: 0 0;
   border: 3px solid black;
+  background-color: #FFD7D7;
   border-radius: 10px 10px 10px 10px;
   width: 400px;
 }

@@ -36,9 +36,10 @@ exports.createOnePost = async (req, res) => {
 
 exports.getAllPost = async (req, res) => {
   try {
-    connection.query(`SELECT postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`, function (_error, results, _fields) {
-      return res.status(200).json(results);
-    });
+    connection.query(`SELECT postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`,
+      function (_error, results, _fields) {
+        return res.status(200).json(results);
+      });
   }
   catch (error) {
     console.error(error);
@@ -64,9 +65,10 @@ exports.createOneComment = async (req, res) => {
 
 exports.getAllCommentByPost = async (req, res) => {
   try {
-    connection.query(`SELECT postId, userId, lastName, firstName, comment, commentDate FROM user JOIN comments ON user._id = comments.userId ORDER BY commentDate ASC`, function (_error, results, _fields) {
-      return res.status(200).json(results);
-    });
+    connection.query(`SELECT postId, userId, lastName, firstName, comment, commentDate FROM user JOIN comments ON user._id = comments.userId ORDER BY commentDate ASC`,
+      function (_error, results, _fields) {
+        return res.status(200).json(results);
+      });
   }
   catch (error) {
     console.error(error);

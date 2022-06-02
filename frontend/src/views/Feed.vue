@@ -17,29 +17,36 @@
         <div class=" flex flex_column post_head">
             <div class="flex flex_row">
                 <p class="post_lastname">{{ post.lastName }}</p>
-                <p class="post_firstname">{{ post.firstName }}</p>
+                <p class="post_firstname">{{ post.firstName }},</p>
             </div>
-            <p class="post_date">Le {{ dateFormat[index] }} à {{ timeFormat[index] }}</p>
+            <p class="post_date">le {{ dateFormat[index] }} à {{ timeFormat[index] }}</p>
+            <div class="flex flex_row">
+                <i class="fas fa-edit fa-2x"></i>
+                <i class="fas fa-trash-alt fa-2x"></i>
+            </div>
         </div>
         <div class="flex flex_column post_body">
             <p class="post_text">{{ post.text }}</p>
             <img class="post_image flex" :src="post.file" alt="image de publication">
-            <div class="flex flex_column flex_align--center flex_around post_foot">
-                <form class="flex flex_column comment_form" v-on:submit.prevent="sendComment(post.postId)"
-                    enctype="application/json">
-                    <input type="text" name="create_comment" id="comment_create" placeholder="Commentez ici"
-                        v-model="comment">
-                    <input class="post_comment_create" id="comment_submit" value="Commenter" type="submit">
+            <div class="flex flex_row flex_between post_foot">
+                <form class="comment_form" enctype="application/json">
+                    <textarea type="text" name="create_comment" id="comment_create" placeholder="Commentez ici"
+                        v-model="comment"></textarea>
+                    <i class="fas fa-share fa-xl" id="comment_submit" v-on:click.prevent="sendComment(post.postId)"></i>
                 </form>
             </div>
-            <div class="flex flex_column comment_body" v-for="(comment, index) in comments" :key="comment.id">
+            <div class="flex flex_column" v-for="(comment, index) in comments" :key="comment.id">
                 <div v-if="post.postId == comment.postId">
-                    <div class="flex flex_row">
+                    <div class="flex flex_row comment">
                         <p class="comment_lastname">{{ comment.lastName }}</p>
-                        <p class="comment_firstname">{{ comment.firstName }}</p>
-                        <p class="comment_date">Le {{ commentDateFormat[index] }} à {{ commentTimeFormat[index] }}</p>
+                        <p class="comment_firstname">{{ comment.firstName }},</p>
                     </div>
-                    <p class="post_comment">{{ comment.comment }}</p>
+                    <div class="flex flex_row">
+                    <p class="comment_date">{{ commentDateFormat[index] }} à {{ commentTimeFormat[index] }}</p>
+                        <i class="fas fa-edit fa-1x"></i>
+                        <i class="fas fa-trash-alt fa-1x"></i>
+                    </div>
+                    <p class="comment_comment">{{ comment.comment }}</p>
                 </div>
             </div>
         </div>
@@ -62,7 +69,6 @@ export default {
             text: '',
             file: '',
             comment: ''
-          
         }
     },
     computed: {
@@ -115,8 +121,31 @@ form {
     margin-bottom: 20px;
     padding: 0 0;
     border: 3px solid black;
+    background-color: #FFD7D7;
     border-radius: 10px 10px 10px 10px;
     width: 350px;
+}
+
+.fa {
+    &-edit {
+        margin-left: auto;
+        padding: 10px 10px;
+        cursor: pointer;
+
+        &:hover {
+            color: darkblue;
+        }
+    }
+
+    &-trash-alt {
+        padding: 10px 10px;
+        margin-right: auto;
+        cursor: pointer;
+
+        &:hover {
+            color: red;
+        }
+    }
 }
 
 label {
@@ -135,14 +164,6 @@ textarea {
     margin-right: 10px;
 }
 
-textarea {
-    min-width: 325px;
-    max-width: 325px;
-    height: 200px;
-    min-height: 100px;
-    max-height: 200px;
-}
-
 .navForm {
     margin-top: 20px;
     margin-left: auto;
@@ -150,36 +171,72 @@ textarea {
     margin-bottom: 20px;
 }
 
-.comment_form {
-    border: none;
-    margin-bottom: 0;
+.comment {
+    border-top: 2px solid black;
+
+    &_form {
+        border: none;
+        margin-bottom: 0;
+    }
+
+    &_lastname {
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-bottom: 0;
+    }
+
+    &_firstname {
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+
+    &_date {
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 100px;
+        margin-bottom: 0;
+    }
+
+    &_comment {
+        border-top: 1px solid black;
+        font-weight: normal;
+        margin: 0;
+        margin-bottom: 10px;
+        padding-left: 10px;
+        text-align: left;
+    }
+
 }
 
 #comment {
     &_create {
-        width: 330px;
+        min-width: 290px;
+        width: 290px;
+        max-width: 290px;
+        min-height: 20px;
+        height: 60px;
+        max-height: 60px;
         margin-top: 20px;
-        margin-left: auto;
-        margin-right: auto;
+        margin-left: 10px;
         margin-bottom: 10px;
     }
 
     &_submit {
-        background-color: white;
+        position: relative;
+        top: -40px;
+        left: 0;
         color: black;
         font-weight: bold;
-        border: 1px solid black;
-        border-radius: 5px 5px 5px 5px;
-        width: 150px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
         margin-left: auto;
-        margin-right: auto;
+        margin-right: 10px;
         margin-bottom: 20px;
+        cursor: pointer;
 
         &:hover {
-            border: 1px solid darkblue;
             color: darkblue;
-            box-shadow: 0px 1px 10px darkblue;
         }
     }
 }
@@ -205,6 +262,12 @@ textarea {
     }
 
     &_create {
+        min-width: 325px;
+        max-width: 325px;
+        height: 200px;
+        min-height: 100px;
+        max-height: 200px;
+
         &::placeholder {
             position: absolute;
             top: 0;
@@ -215,11 +278,12 @@ textarea {
 
 .post {
     &_feed {
-        border-bottom: 1px solid black;
+        border-bottom: 2px solid black;
         margin-bottom: 20px;
     }
 
     &_head {
+        background-color: #FFD7D7;
         margin: auto;
         padding: 0 0;
         border: 3px solid black;
@@ -231,16 +295,22 @@ textarea {
     &_lastname {
         margin-left: 10px;
         margin-right: 10px;
+        margin-bottom: 0;
+    }
+
+    &_firstname {
+        margin-bottom: 0;
     }
 
     &_date {
         margin-top: 0;
+        margin-bottom: 0;
         margin-left: 10px;
         text-align: left;
-        font-weight: normal;
     }
 
     &_body {
+        background-color: #FFD7D7;
         position: relative;
         top: -3px;
         left: 0;
@@ -255,24 +325,22 @@ textarea {
 
     &_text {
         margin: 0;
-        padding: 10px;
+        margin-top: 10px;
+        padding-left: 10px;
         text-align: left;
-        border-bottom: 1px solid black;
+        font-weight: normal;
     }
 
     &_image {
         margin-left: auto;
         margin-right: auto;
+        border-top: 1px solid black;
         width: 350px;
         height: 350px;
     }
 
     &_foot {
-        border-top: 1px solid black;
-    }
-
-    &_usersLiked {
-        visibility: hidden;
+        border-top: 3px solid black;
     }
 }
 </style>

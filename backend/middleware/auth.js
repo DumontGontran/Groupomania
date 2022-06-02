@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
     const userId = decodedToken.userId;
 
     if (req.body.userId && req.body.userId !== userId) {
-      throw res.status(403).json({ message: 'User ID invalide !' });
+      return res.status(403).json({ message: 'User ID invalide !' });
     } else {
       next();
     }

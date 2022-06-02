@@ -5,9 +5,9 @@
     <h1>Groupomania</h1>
     </router-link>
     <ul class="flex flex_column">
-      <li><router-link class="navLink" to="/feed">Fil d'actualité</router-link></li>
-      <li><router-link class="navLink" to="/profil">Profil</router-link></li>
-      <li><router-link class="navLink" to="/login" v-on:click.prevent="logout">Déconnexion</router-link></li>
+      <li><router-link class="navLink" to="/feed"><i class="fas fa-comments fa-xl"></i></router-link></li>
+      <li><router-link class="navLink" to="/profil"><i class="fas fa-user-circle fa-xl"></i></router-link></li>
+      <li><router-link class="navLink" to="/login" v-on:click.prevent="logout"><i class="fas fa-sign-out-alt fa-xl"></i></router-link></li>
     </ul>
   </header>
 </template>
@@ -18,6 +18,7 @@ export default {
   methods:{
     logout(){
       localStorage.clear()
+      window.location.reload()
     }
   }
 };
@@ -50,6 +51,25 @@ li {
   padding-bottom: 10px;
 }
 
+.fa {
+    &-sign-out-alt {
+        margin-left: auto;
+        cursor: pointer;
+
+        &:hover {
+            color: red;
+        }
+    }
+    &-user-circle, &-comments{
+      margin-left: auto;
+        cursor: pointer;
+
+        &:hover {
+            color: darkblue;
+        }
+    }
+}
+
 .navLink{
   margin: 0;
   padding:0;
@@ -60,11 +80,6 @@ li {
   font-weight: bold;
   &--logo{
     text-decoration: none;
-  }
-  &:hover{
-    text-decoration: underline;
-    text-decoration-color: red;
-    text-decoration-thickness: 30%;
   }
 }
 </style>
