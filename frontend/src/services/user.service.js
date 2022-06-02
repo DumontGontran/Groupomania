@@ -162,4 +162,14 @@ export default {
             return error
         }
     },
+
+    async getAllCommentsByPost() {
+        try {
+            const res = await axios.get(`${API_URL}/public_feed/comment`, this.header())
+            return res.data
+        } catch (error) {
+            return error,
+                router.go(0)
+        }
+    },
 }

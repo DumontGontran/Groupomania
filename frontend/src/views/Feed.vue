@@ -4,12 +4,12 @@
         <h2>Fil d'actualité</h2>
         <form class="flex flex_column" v-on:submit.prevent="sendPost" enctype="multipart/form-data">
             <label for="create_post">Créer une publication</label>
-            <textarea type="text" rows="5" name="create_post" id="create_post" placeholder="Tapez votre message ici"
+            <textarea type="text" rows="5" name="post_create" id="post_create" placeholder="Tapez votre message ici"
                 v-model="text"></textarea>
             <div class="navForm flex flex_column flex_align--center">
                 <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg"
                     v-on:change="selectedFile" />
-                <input type="submit" value="Publier" id="submit">
+                <input type="submit" value="Publier" id="post_submit">
             </div>
         </form>
     </section>
@@ -25,11 +25,22 @@
             <p class="post_text">{{ post.text }}</p>
             <img class="post_image flex" :src="post.file" alt="image de publication">
             <div class="flex flex_column flex_align--center flex_around post_foot">
-                <form class="flex flex_column comment_form" v-on:submit.prevent="sendComment(post.postId)" enctype="application/json">
-                    <input type="text" name="create_comment" id="create_comment" placeholder="Commentez ici"
+                <form class="flex flex_column comment_form" v-on:submit.prevent="sendComment(post.postId)"
+                    enctype="application/json">
+                    <input type="text" name="create_comment" id="comment_create" placeholder="Commentez ici"
                         v-model="comment">
-                    <input class="post_comment_create" id="submit_comment" value="Commenter" type="submit">
+                    <input class="post_comment_create" id="comment_submit" value="Commenter" type="submit">
                 </form>
+            </div>
+            <div class="flex flex_column comment_body" v-for="(comment, index) in comments" :key="comment.id">
+                <div v-if="post.postId == comment.postId">
+                    <div class="flex flex_row">
+                        <p class="comment_lastname">{{ comment.lastName }}</p>
+                        <p class="comment_firstname">{{ comment.firstName }}</p>
+                        <p class="comment_date">Le {{ commentDateFormat[index] }} à {{ commentTimeFormat[index] }}</p>
+                    </div>
+                    <p class="post_comment">{{ comment.comment }}</p>
+                </div>
             </div>
         </div>
     </section>
@@ -47,9 +58,11 @@ export default {
     data() {
         return {
             posts: [],
+            comments: [],
             text: '',
             file: '',
             comment: ''
+          
         }
     },
     computed: {
@@ -58,11 +71,20 @@ export default {
         },
         timeFormat() {
             return this.posts.map(p => p.date.split(' ')[1].split('.')[0])
+        },
+        commentDateFormat() {
+            return this.comments.map(c => c.commentDate.split(' ')[0].split('-').reverse().join('/'))
+        },
+        commentTimeFormat() {
+            return this.comments.map(c => c.commentDate.split(' ')[1].split('.')[0])
         }
     },
     async mounted() {
         this.posts = await UserService.getAllPost()
         console.log('GET POSTS', this.posts)
+
+        this.comments = await UserService.getAllCommentsByPost()
+        console.log('GET COMMENTS By Post', this.comments)
     },
     methods: {
         selectedFile(event) {
@@ -128,51 +150,67 @@ textarea {
     margin-bottom: 20px;
 }
 
-.comment_form{
+.comment_form {
     border: none;
     margin-bottom: 0;
 }
-#create_post {
-    &::placeholder {
-        position: absolute;
-        top: 0;
-        left: 0;
+
+#comment {
+    &_create {
+        width: 330px;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 10px;
+    }
+
+    &_submit {
+        background-color: white;
+        color: black;
+        font-weight: bold;
+        border: 1px solid black;
+        border-radius: 5px 5px 5px 5px;
+        width: 150px;
+        height: 25px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+
+        &:hover {
+            border: 1px solid darkblue;
+            color: darkblue;
+            box-shadow: 0px 1px 10px darkblue;
+        }
     }
 }
 
-#create_comment {
-    width: 330px;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px;
-}
+#post {
+    &_submit {
+        margin-top: 20px;
+        background-color: white;
+        color: black;
+        font-weight: bold;
+        border: 1px solid black;
+        border-radius: 5px 5px 5px 5px;
+        width: 150px;
+        height: 25px;
+        margin-left: auto;
+        margin-right: auto;
 
-#submit_comment {
-    margin-bottom: 20px;
-}
-
-#submit,
-#submit_comment {
-    background-color: white;
-    color: black;
-    font-weight: bold;
-    border: 1px solid black;
-    border-radius: 5px 5px 5px 5px;
-    width: 150px;
-    height: 25px;
-    margin-left: auto;
-    margin-right: auto;
-
-    &:hover {
-        border: 1px solid darkblue;
-        color: darkblue;
-        box-shadow: 0px 1px 10px darkblue;
+        &:hover {
+            border: 1px solid darkblue;
+            color: darkblue;
+            box-shadow: 0px 1px 10px darkblue;
+        }
     }
-}
 
-#submit {
-    margin-top: 20px;
+    &_create {
+        &::placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
 }
 
 .post {

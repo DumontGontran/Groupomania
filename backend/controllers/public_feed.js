@@ -51,9 +51,22 @@ exports.createOneComment = async (req, res) => {
     const comment = req.body.comment;
     const userId = req.body.userId;
     const postId = req.body.postId;
+    const commentDate = new Date();
 
-    connection.query(`INSERT INTO comments (comment, userId, postId) VALUES (?,?,?)`, [comment, userId, postId]);
+    connection.query(`INSERT INTO comments (comment, userId, postId, commentDate) VALUES (?,?,?,?)`, [comment, userId, postId, commentDate]);
     return res.status(201).json({ message: 'Commentaire envoyé !' });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.getAllCommentByPost = async (req, res) => {
+  try {
+    connection.query(`SELECT postId, userId, lastName, firstName, comment, commentDate FROM user JOIN comments ON user._id = comments.userId ORDER BY commentDate ASC`, function (_error, results, _fields) {
+      return res.status(200).json(results);
+    });
   }
   catch (error) {
     console.error(error);
