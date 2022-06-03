@@ -16,20 +16,27 @@
     <article v-for="(post, index) in posts" :key="post.id">
         <div class="flex flex_column post_body">
             <div>
-                <div class="flex flex_row" :title="'Créé le ' + dateFormat[index] + ' à ' + timeFormat[index]">
-                    <p class="post_lastname">{{ post.lastName }}</p>
-                    <p class="post_firstname">{{ post.firstName }}</p>
+                <div class="flex flex_row flex_between"
+                    :title="'Créé le ' + dateFormat[index] + ' à ' + timeFormat[index]">
+                    <p class="post_lastname post_firstname">{{ post.lastName }} {{ post.firstName }}</p>
+                    <span v-if="!post.edit_mode">
+                        <i class="fas fa-edit" id="comment_submit" v-show="post.userId == userId"
+                            v-on:click.prevent="post.edit_mode = true; post.origin_value = post.text"></i>
+                        <i class="fas fa-trash-alt" v-show="post.userId == userId"
+                            v-on:click.prevent="deletePost(post.postId)"></i>
+                    </span>
                 </div>
-                <div class="flex flex_row flex_between flex_align--center">
-                    <i class="fas fa-trash-alt" v-on:click.prevent="deletePost(post.postId)"></i>
+                <div class="flex flex_row flex_between">
+                    <p class="comment_comment" v-if="!post.edit_mode">{{ post.text }}</p>
+                    <input v-show="post.userId == userId && post.edit_mode" type="text" class="comment_create"
+                        id="comment_create" v-model="post.text">
+                    <span v-if="post.edit_mode" class="flex flex_align--center">
+                        <i class="fas fa-check" id="comment_submit" v-show="post.userId == userId"
+                            v-on:click.prevent="post.edit_mode = false; modifyPost(post)"></i>
+                        <i class="fas fa-times" id="comment_submit" v-show="post.userId == userId"
+                            v-on:click.prevent="post.edit_mode = false; post.text = post.origin_value"></i>
+                    </span>
                 </div>
-            </div>
-            <p class="post_text">{{ post.text }}</p>
-            <div class="flex flex_row">
-                <input v-show="post.userId == userId" type="text" class="comment_create" id="comment_create"
-                    placeholder="Modifier votre texte ici" v-model="modifiedPost">
-                <i class="fas fa-edit" id="comment_submit" v-show="post.userId == userId"
-                    v-on:click.prevent="modifyPost(post.postId)"></i>
             </div>
             <img class="post_image flex" :src="post.file" alt="image de publication">
             <div class="flex flex_row flex_between post_foot">
@@ -41,27 +48,25 @@
             </div>
             <div class="flex flex_column" v-for="(comment, index) in comments" :key="comment.id">
                 <div v-if="post.postId == comment.postId">
-                    <div class="flex flex_row comment"
+                    <div class="flex flex_row flex_between comment"
                         :title="commentDateFormat[index] + ' à ' + commentTimeFormat[index]">
-                        <p class="comment_lastname">{{ comment.lastName }}</p>
-                        <p class="comment_firstname">{{ comment.firstName }}</p>
-                    </div>
-                    <div class="flex flex_row" style="justify-content: space-between">
-                        <p class="comment_comment" v-if="!comment.edit_mode">{{ comment.comment }}</p>
-                        <input v-show="comment.userId == userId && comment.edit_mode" type="text" class="comment_create"
-                            id="comment_create" v-model="comment.comment">
+                        <p class="comment_lastname comment_firstname">{{ comment.lastName }} {{ comment.firstName }}</p>
+
                         <span v-if="!comment.edit_mode">
                             <i class="fas fa-edit" id="comment_submit" v-show="comment.userId == userId"
                                 v-on:click.prevent="comment.edit_mode = true; comment.origin_value = comment.comment"></i>
                             <i class="fas fa-trash-alt" v-show="comment.userId == userId"
-                                v-on:click.prevent="deleteComment(comment.commentId)" style="color: red"></i>
+                                v-on:click.prevent="deleteComment(comment.commentId)"></i>
                         </span>
-                        <span v-if="comment.edit_mode">
+                    </div>
+                    <div class="flex flex_row flex_between">
+                        <p class="comment_comment" v-if="!comment.edit_mode">{{ comment.comment }}</p>
+                        <input v-show="comment.userId == userId && comment.edit_mode" type="text" class="comment_create"
+                            id="comment_create" v-model="comment.comment">
+                        <span v-if="comment.edit_mode" class="flex flex_align--center">
                             <i class="fas fa-check" id="comment_submit" v-show="comment.userId == userId"
-                                style="color: green"
                                 v-on:click.prevent="comment.edit_mode = false; modifyComment(comment)"></i>
                             <i class="fas fa-times" id="comment_submit" v-show="comment.userId == userId"
-                                style="color: red"
                                 v-on:click.prevent="comment.edit_mode = false; comment.comment = comment.origin_value"></i>
                         </span>
                     </div>
@@ -87,9 +92,7 @@ export default {
             comments: [],
             text: '',
             file: '',
-            comment: '',
-            modifiedPost: '',
-            modifiedComment: ''
+            comment: ''
         }
     },
     computed: {
@@ -111,7 +114,7 @@ export default {
         console.log('GET POSTS', this.posts)
 
         this.comments = await UserService.getAllCommentsByPost()
-        console.log('GET COMMENTS By Post', this.comments)
+        console.log('GET COMMENTS BY POST', this.comments)
     },
     methods: {
         selectedFile(event) {
@@ -121,13 +124,12 @@ export default {
         async sendPost() {
             await UserService.createPost(this.text, this.file)
         },
-        async modifyPost(postId) {
-            console.log('postId', postId)
-            await UserService.updateOnePost(postId, this.modifiedPost)
+        async modifyPost(post) {
+            await UserService.updateOnePost(post.postId, post.text)
         },
         async deletePost(postId) {
             console.log(postId)
-            await UserService.deleteOneComment(postId, this.commentId)
+            await UserService.deleteOnePost(postId)
         },
         async sendComment(postId) {
             console.log('postId', postId)
@@ -164,7 +166,16 @@ form {
 
 .fa {
 
-    &-edit,
+    &-edit {
+        margin-left: auto;
+        padding: 10px 10px;
+        cursor: pointer;
+
+        &:hover {
+            color: darkblue;
+        }
+    }
+
     &-share {
         margin-left: auto;
         padding: 10px 10px;
@@ -180,10 +191,15 @@ form {
         padding: 10px 10px;
         padding-right: 14px;
         cursor: pointer;
+        color: red;
+    }
 
-        &:hover {
-            color: red;
-        }
+    &-check::before {
+        color: green;
+    }
+
+    &-times::before {
+        color: red;
     }
 }
 
@@ -211,7 +227,7 @@ textarea {
 }
 
 .comment {
-    border-top: 2px solid black;
+    border-top: 1px solid black;
 
     &_form {
         border: none;
@@ -238,10 +254,9 @@ textarea {
     }
 
     &_comment {
-        border-top: 1px solid black;
         font-weight: normal;
         margin: 0;
-        padding-top: 10px;
+        padding-top: 0;
         margin-bottom: 10px;
         padding-left: 10px;
         text-align: left;
@@ -324,6 +339,8 @@ textarea {
     }
 
     &_lastname {
+        text-justify: center;
+        margin-top: 10px;
         margin-left: 10px;
         margin-right: 10px;
         margin-bottom: 0;
@@ -356,9 +373,8 @@ textarea {
 
     &_text {
         margin: 0;
-        margin-top: 10px;
-        margin-bottom: 10px;
         padding-left: 10px;
+        margin-bottom: 10px;
         text-align: left;
         font-weight: normal;
     }

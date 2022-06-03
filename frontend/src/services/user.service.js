@@ -160,18 +160,17 @@ export default {
             return res.data,
             router.go(0)
         } catch (error) {
-            return error,
-            router.push('/login')
+            return error
         }
     },
 
-    async updateOneComment(commentId, modifiedComment) {
+    async updateOneComment(commentId, comment) {
         try {
             let header = this.header()
             header.headers['content-type'] = 'application/json'
 
             const updateComment = {
-                'comment': modifiedComment,
+                'comment': comment,
                 'commentId': commentId
             }
 
@@ -180,29 +179,26 @@ export default {
             const res = await axios.patch(`${API_URL}/feed/comment/${commentId}`, updateComment, header)
             return res.data
         } catch (error) {
-            return error,
-            router.push('/login')
+            return error
         }
     },
 
-    async updateOnePost(postId, modifiedPost) {
+    async updateOnePost(postId, text) {
         try {
             let header = this.header()
             header.headers['content-type'] = 'application/json'
 
             const updatePost = {
-                'text': modifiedPost,
+                'text': text,
                 'postId': postId
             }
 
             console.log('Modification de la publication', updatePost)
 
             const res = await axios.patch(`${API_URL}/feed/${postId}`, updatePost, header)
-            return res.data/* ,
-            router.go(0) */
+            return res.data
         } catch (error) {
-            return error/* ,
-            router.push('/login') */
+            return error
         }
     },
 
@@ -216,21 +212,16 @@ export default {
         }
     },
 
-    async deleteOnePost(postId, commentId) {
+    async deleteOnePost(postId) {
         try {
             let header = this.header()
             header.headers['content-type'] = 'application/json'
 
-            const deletePost = {
-                'postId': postId,
-                'commentId': commentId
-            }
-            const res = await axios.delete(`${API_URL}/feed/${postId}`,deletePost, header)
-            return res.data/* ,
-            router.go(0) */
+            const res = await axios.delete(`${API_URL}/feed/${postId}`, header)
+            return res.data,
+            router.go(0)
         } catch (error) {
-            return error/* ,
-            router.push('/login') */
+            return error
         }
     },
 
@@ -239,11 +230,10 @@ export default {
             let header = this.header()
             header.headers['content-type'] = 'application/json'
             const res = await axios.delete(`${API_URL}/feed/comment/${commentId}`, header)
-            return res.data/* ,
-            router.go(0) */
+            return res.data,
+            router.go(0)
         } catch (error) {
-            return error/* ,
-            router.push('/login') */
+            return error
         }
     },
 }

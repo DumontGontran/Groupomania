@@ -112,13 +112,11 @@ exports.getAllCommentByPost = async (req, res) => {
 
 exports.deleteOnePost = async (req, res) => {
   try {
-    const commentId = req.body.commentId;
-    const postId = req.body.postId;
+    const id = req.params.id;
 
-    connection.query(`DELETE FROM comments WHERE commentId = (?)`, [commentId], function (_error, _results, _fields){
-    connection.query(`DELETE FROM posts WHERE postId = (?)` [postId]);
+    connection.query(`DELETE FROM comments WHERE postId = (?)`, [id]);
+    connection.query(`DELETE FROM posts WHERE postId = (?)`, [id]);
     return res.status(200).json({ message: 'Publication et ses commentaires supprimés !'})
-    });
   }
   catch (error) {
     console.error(error);
@@ -126,9 +124,9 @@ exports.deleteOnePost = async (req, res) => {
   }
 };
 
-exports.deleteOneCommentByPost = async (req, res) => {
+exports.deleteOneComment = async (req, res) => {
   try {
-    const commentId = req.params.commentId;
+    const commentId = req.params.id;
  // && owner_id==req.auth.id
     connection.query(`DELETE FROM comments WHERE commentId = (?)`, [commentId]);
     return res.status(200).json({ message: 'Commentaire supprimé !' });

@@ -14,9 +14,9 @@ router.get('/', auth, postCtrl.getAllPost);
 router.get('/comment/', auth, postCtrl.getAllCommentByPost);
 
 router.patch('/comment/:id', auth, postCtrl.updateOneComment);
-router.patch('/:id', auth, postCtrl.updateOneComment);
+router.patch('/:id', auth, postCtrl.updateOnePost);
 
 router.delete('/:id', auth, postCtrl.deleteOnePost);
-router.delete('/comment/:id', auth, postCtrl.deleteOneCommentByPost);
+router.delete('/comment/:id', auth, postCtrl.deleteOneComment);
 
 module.exports = router;
