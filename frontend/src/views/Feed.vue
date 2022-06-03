@@ -13,18 +13,17 @@
             </div>
         </form>
     </section>
-    <section v-for="(post, index) in posts" :key="post.id">
-        <div class=" flex flex_column post_head">
-            <div class="flex flex_row">
-                <p class="post_lastname">{{ post.lastName }}</p>
-                <p class="post_firstname">{{ post.firstName }},</p>
-            </div>
-            <div class="flex flex_row flex_between flex_align--center">
-                <p class="post_date">le {{ dateFormat[index] }} à {{ timeFormat[index] }}</p>
-                <i class="fas fa-trash-alt" v-on:click.prevent="deletePost(post.postId)"></i>
-            </div>
-        </div>
+    <article v-for="(post, index) in posts" :key="post.id">
         <div class="flex flex_column post_body">
+            <div>
+                <div class="flex flex_row" :title="'Créé le ' + dateFormat[index] + ' à ' + timeFormat[index]">
+                    <p class="post_lastname">{{ post.lastName }}</p>
+                    <p class="post_firstname">{{ post.firstName }}</p>
+                </div>
+                <div class="flex flex_row flex_between flex_align--center">
+                    <i class="fas fa-trash-alt" v-on:click.prevent="deletePost(post.postId)"></i>
+                </div>
+            </div>
             <p class="post_text">{{ post.text }}</p>
             <div class="flex flex_row">
                 <input v-show="post.userId == userId" type="text" class="comment_create" id="comment_create"
@@ -42,25 +41,34 @@
             </div>
             <div class="flex flex_column" v-for="(comment, index) in comments" :key="comment.id">
                 <div v-if="post.postId == comment.postId">
-                    <div class="flex flex_row comment">
+                    <div class="flex flex_row comment"
+                        :title="commentDateFormat[index] + ' à ' + commentTimeFormat[index]">
                         <p class="comment_lastname">{{ comment.lastName }}</p>
-                        <p class="comment_firstname">{{ comment.firstName }},</p>
+                        <p class="comment_firstname">{{ comment.firstName }}</p>
                     </div>
-                    <div class="flex flex_row">
-                        <p class="comment_date">{{ commentDateFormat[index] }} à {{ commentTimeFormat[index] }}</p>
-                        <i class="fas fa-trash-alt" v-on:click.prevent="deleteComment(comment.commentId)"></i>
-                    </div>
-                    <p class="comment_comment">{{ comment.comment }}</p>
-                    <div class="flex flex_row">
-                        <input v-show="comment.userId == userId" type="text" class="comment_create" id="comment_create"
-                            placeholder="Modifier votre commentaire ici" v-model="modifiedComment">
-                        <i class="fas fa-edit" id="comment_submit" v-show="comment.userId == userId"
-                            v-on:click.prevent="modifyComment(comment.commentId)"></i>
+                    <div class="flex flex_row" style="justify-content: space-between">
+                        <p class="comment_comment" v-if="!comment.edit_mode">{{ comment.comment }}</p>
+                        <input v-show="comment.userId == userId && comment.edit_mode" type="text" class="comment_create"
+                            id="comment_create" v-model="comment.comment">
+                        <span v-if="!comment.edit_mode">
+                            <i class="fas fa-edit" id="comment_submit" v-show="comment.userId == userId"
+                                v-on:click.prevent="comment.edit_mode = true; comment.origin_value = comment.comment"></i>
+                            <i class="fas fa-trash-alt" v-show="comment.userId == userId"
+                                v-on:click.prevent="deleteComment(comment.commentId)" style="color: red"></i>
+                        </span>
+                        <span v-if="comment.edit_mode">
+                            <i class="fas fa-check" id="comment_submit" v-show="comment.userId == userId"
+                                style="color: green"
+                                v-on:click.prevent="comment.edit_mode = false; modifyComment(comment)"></i>
+                            <i class="fas fa-times" id="comment_submit" v-show="comment.userId == userId"
+                                style="color: red"
+                                v-on:click.prevent="comment.edit_mode = false; comment.comment = comment.origin_value"></i>
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </article>
 </template>
 
 <script>
@@ -125,9 +133,8 @@ export default {
             console.log('postId', postId)
             await UserService.createComment(this.comment, postId)
         },
-        async modifyComment(commentId) {
-            console.log('commentId', commentId)
-            await UserService.updateOneComment(commentId, this.modifiedComment)
+        async modifyComment(comment) {
+            await UserService.updateOneComment(comment.commentId, comment.comment)
         },
         async deleteComment(commentId) {
             console.log(commentId)
@@ -156,7 +163,9 @@ form {
 }
 
 .fa {
-    &-edit, &-share {
+
+    &-edit,
+    &-share {
         margin-left: auto;
         padding: 10px 10px;
         cursor: pointer;
@@ -169,7 +178,7 @@ form {
     &-trash-alt {
         margin-left: auto;
         padding: 10px 10px;
-        padding-right:14px;
+        padding-right: 14px;
         cursor: pointer;
 
         &:hover {

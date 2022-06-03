@@ -178,8 +178,7 @@ export default {
             console.log('Modification du Commentaire', updateComment)
 
             const res = await axios.patch(`${API_URL}/feed/comment/${commentId}`, updateComment, header)
-            return res.data,
-            router.go(0)
+            return res.data
         } catch (error) {
             return error,
             router.push('/login')
@@ -239,11 +238,7 @@ export default {
         try {
             let header = this.header()
             header.headers['content-type'] = 'application/json'
-
-            const deleteComment = {
-                'commentId': commentId
-            }
-            const res = await axios.delete(`${API_URL}/feed/comment`, deleteComment, header)
+            const res = await axios.delete(`${API_URL}/feed/comment/${commentId}`, header)
             return res.data/* ,
             router.go(0) */
         } catch (error) {

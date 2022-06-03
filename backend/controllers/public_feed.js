@@ -38,7 +38,12 @@ exports.createOnePost = async (req, res) => {
 exports.getAllPost = async (req, res) => {
   try {
     connection.query(`SELECT userId, postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`,
-      function (_error, results, _fields) {
+      async function (_error, results, _fields) {
+        /*for(feed of results){
+          let comment = await connection.query(`SELECT userId, postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`);
+          feed.comment = comment;
+        }*/
+        // Get comments per feed to send -> [ { _id:..., txt:... AND comments: [..] } ]
         return res.status(200).json(results);
       });
   }
@@ -123,8 +128,8 @@ exports.deleteOnePost = async (req, res) => {
 
 exports.deleteOneCommentByPost = async (req, res) => {
   try {
-    const commentId = req.body.commentId;
-
+    const commentId = req.params.commentId;
+ // && owner_id==req.auth.id
     connection.query(`DELETE FROM comments WHERE commentId = (?)`, [commentId]);
     return res.status(200).json({ message: 'Commentaire supprimé !' });
   }
