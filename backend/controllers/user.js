@@ -20,7 +20,7 @@ connection.connect(function (error) {
     console.error('Connexion MySQL échouée: ' + error.stack);
     return;
   }
-  console.error('Connexion MySQL réussie !')
+  console.error('Connexion MySQL réussie sur le service USER !')
 });
 
 exports.register = async (req, res) => {

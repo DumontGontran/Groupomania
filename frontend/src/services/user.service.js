@@ -124,7 +124,7 @@ export default {
             newPost.append('file', file)
             newPost.append('userId', parseInt(userId))
 
-            const res = await axios.post(`${API_URL}/public_feed/`, newPost, header)
+            const res = await axios.post(`${API_URL}/feed/`, newPost, header)
             return res.data,
                 router.go(0)
         } catch (error) {
@@ -135,7 +135,7 @@ export default {
 
     async getAllPost() {
         try {
-            const res = await axios.get(`${API_URL}/public_feed/`, this.header())
+            const res = await axios.get(`${API_URL}/feed/`, this.header())
             return res.data
         } catch (error) {
             return error,
@@ -156,7 +156,7 @@ export default {
 
             console.log('Nouveau Commentaire', newComment)
 
-            const res = await axios.post(`${API_URL}/public_feed/comment`, newComment, header)
+            const res = await axios.post(`${API_URL}/feed/comment`, newComment, header)
             return res.data,
             router.go(0)
         } catch (error) {
@@ -165,13 +165,90 @@ export default {
         }
     },
 
+    async updateOneComment(commentId, modifiedComment) {
+        try {
+            let header = this.header()
+            header.headers['content-type'] = 'application/json'
+
+            const updateComment = {
+                'comment': modifiedComment,
+                'commentId': commentId
+            }
+
+            console.log('Modification du Commentaire', updateComment)
+
+            const res = await axios.patch(`${API_URL}/feed/comment/${commentId}`, updateComment, header)
+            return res.data,
+            router.go(0)
+        } catch (error) {
+            return error,
+            router.push('/login')
+        }
+    },
+
+    async updateOnePost(postId, modifiedPost) {
+        try {
+            let header = this.header()
+            header.headers['content-type'] = 'application/json'
+
+            const updatePost = {
+                'text': modifiedPost,
+                'postId': postId
+            }
+
+            console.log('Modification de la publication', updatePost)
+
+            const res = await axios.patch(`${API_URL}/feed/${postId}`, updatePost, header)
+            return res.data/* ,
+            router.go(0) */
+        } catch (error) {
+            return error/* ,
+            router.push('/login') */
+        }
+    },
+
     async getAllCommentsByPost() {
         try {
-            const res = await axios.get(`${API_URL}/public_feed/comment`, this.header())
+            const res = await axios.get(`${API_URL}/feed/comment/`, this.header())
             return res.data
         } catch (error) {
             return error,
                 router.go(0)
+        }
+    },
+
+    async deleteOnePost(postId, commentId) {
+        try {
+            let header = this.header()
+            header.headers['content-type'] = 'application/json'
+
+            const deletePost = {
+                'postId': postId,
+                'commentId': commentId
+            }
+            const res = await axios.delete(`${API_URL}/feed/${postId}`,deletePost, header)
+            return res.data/* ,
+            router.go(0) */
+        } catch (error) {
+            return error/* ,
+            router.push('/login') */
+        }
+    },
+
+    async deleteOneComment(commentId) {
+        try {
+            let header = this.header()
+            header.headers['content-type'] = 'application/json'
+
+            const deleteComment = {
+                'commentId': commentId
+            }
+            const res = await axios.delete(`${API_URL}/feed/comment`, deleteComment, header)
+            return res.data/* ,
+            router.go(0) */
+        } catch (error) {
+            return error/* ,
+            router.push('/login') */
         }
     },
 }

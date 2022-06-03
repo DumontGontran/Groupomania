@@ -4,7 +4,7 @@
         <h2>Fil d'actualité</h2>
         <form class="flex flex_column" v-on:submit.prevent="sendPost" enctype="multipart/form-data">
             <label for="create_post">Créer une publication</label>
-            <textarea type="text" rows="5" name="post_create" id="post_create" placeholder="Tapez votre message ici"
+            <textarea type="text" rows="5" name="post_create" id="post_create" placeholder="Nouveau message ici"
                 v-model="text"></textarea>
             <div class="navForm flex flex_column flex_align--center">
                 <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg"
@@ -19,20 +19,25 @@
                 <p class="post_lastname">{{ post.lastName }}</p>
                 <p class="post_firstname">{{ post.firstName }},</p>
             </div>
-            <p class="post_date">le {{ dateFormat[index] }} à {{ timeFormat[index] }}</p>
-            <div class="flex flex_row">
-                <i class="fas fa-edit fa-2x"></i>
-                <i class="fas fa-trash-alt fa-2x"></i>
+            <div class="flex flex_row flex_between flex_align--center">
+                <p class="post_date">le {{ dateFormat[index] }} à {{ timeFormat[index] }}</p>
+                <i class="fas fa-trash-alt" v-on:click.prevent="deletePost(post.postId)"></i>
             </div>
         </div>
         <div class="flex flex_column post_body">
             <p class="post_text">{{ post.text }}</p>
+            <div class="flex flex_row">
+                <input v-show="post.userId == userId" type="text" class="comment_create" id="comment_create"
+                    placeholder="Modifier votre texte ici" v-model="modifiedPost">
+                <i class="fas fa-edit" id="comment_submit" v-show="post.userId == userId"
+                    v-on:click.prevent="modifyPost(post.postId)"></i>
+            </div>
             <img class="post_image flex" :src="post.file" alt="image de publication">
             <div class="flex flex_row flex_between post_foot">
                 <form class="comment_form" enctype="application/json">
-                    <textarea type="text" name="create_comment" id="comment_create" placeholder="Commentez ici"
-                        v-model="comment"></textarea>
-                    <i class="fas fa-share fa-xl" id="comment_submit" v-on:click.prevent="sendComment(post.postId)"></i>
+                    <input type="text" name="create_comment" id="comment_create" placeholder="Nouveau commentaire ici"
+                        v-model="comment" />
+                    <i class="fas fa-share" id="comment_submit" v-on:click.prevent="sendComment(post.postId)"></i>
                 </form>
             </div>
             <div class="flex flex_column" v-for="(comment, index) in comments" :key="comment.id">
@@ -42,11 +47,16 @@
                         <p class="comment_firstname">{{ comment.firstName }},</p>
                     </div>
                     <div class="flex flex_row">
-                    <p class="comment_date">{{ commentDateFormat[index] }} à {{ commentTimeFormat[index] }}</p>
-                        <i class="fas fa-edit fa-1x"></i>
-                        <i class="fas fa-trash-alt fa-1x"></i>
+                        <p class="comment_date">{{ commentDateFormat[index] }} à {{ commentTimeFormat[index] }}</p>
+                        <i class="fas fa-trash-alt" v-on:click.prevent="deleteComment(comment.commentId)"></i>
                     </div>
                     <p class="comment_comment">{{ comment.comment }}</p>
+                    <div class="flex flex_row">
+                        <input v-show="comment.userId == userId" type="text" class="comment_create" id="comment_create"
+                            placeholder="Modifier votre commentaire ici" v-model="modifiedComment">
+                        <i class="fas fa-edit" id="comment_submit" v-show="comment.userId == userId"
+                            v-on:click.prevent="modifyComment(comment.commentId)"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,11 +74,14 @@ export default {
     },
     data() {
         return {
+            userId: localStorage.getItem('userId'),
             posts: [],
             comments: [],
             text: '',
             file: '',
-            comment: ''
+            comment: '',
+            modifiedPost: '',
+            modifiedComment: ''
         }
     },
     computed: {
@@ -100,9 +113,25 @@ export default {
         async sendPost() {
             await UserService.createPost(this.text, this.file)
         },
+        async modifyPost(postId) {
+            console.log('postId', postId)
+            await UserService.updateOnePost(postId, this.modifiedPost)
+        },
+        async deletePost(postId) {
+            console.log(postId)
+            await UserService.deleteOneComment(postId, this.commentId)
+        },
         async sendComment(postId) {
             console.log('postId', postId)
             await UserService.createComment(this.comment, postId)
+        },
+        async modifyComment(commentId) {
+            console.log('commentId', commentId)
+            await UserService.updateOneComment(commentId, this.modifiedComment)
+        },
+        async deleteComment(commentId) {
+            console.log(commentId)
+            await UserService.deleteOneComment(commentId)
         }
     }
 }
@@ -127,7 +156,7 @@ form {
 }
 
 .fa {
-    &-edit {
+    &-edit, &-share {
         margin-left: auto;
         padding: 10px 10px;
         cursor: pointer;
@@ -138,8 +167,9 @@ form {
     }
 
     &-trash-alt {
+        margin-left: auto;
         padding: 10px 10px;
-        margin-right: auto;
+        padding-right:14px;
         cursor: pointer;
 
         &:hover {
@@ -194,7 +224,7 @@ textarea {
     &_date {
         margin-top: 10px;
         margin-left: 10px;
-        margin-right: 100px;
+        margin-right: auto;
         margin-bottom: 0;
     }
 
@@ -202,6 +232,7 @@ textarea {
         border-top: 1px solid black;
         font-weight: normal;
         margin: 0;
+        padding-top: 10px;
         margin-bottom: 10px;
         padding-left: 10px;
         text-align: left;
@@ -211,28 +242,19 @@ textarea {
 
 #comment {
     &_create {
-        min-width: 290px;
-        width: 290px;
-        max-width: 290px;
-        min-height: 20px;
-        height: 60px;
-        max-height: 60px;
-        margin-top: 20px;
+        width: 280px;
+        margin-top: 10px;
         margin-left: 10px;
         margin-bottom: 10px;
     }
 
     &_submit {
-        position: relative;
-        top: -40px;
-        left: 0;
         color: black;
         font-weight: bold;
         width: 20px;
         height: 20px;
         margin-left: auto;
-        margin-right: 10px;
-        margin-bottom: 20px;
+
         cursor: pointer;
 
         &:hover {
@@ -288,7 +310,7 @@ textarea {
         padding: 0 0;
         border: 3px solid black;
         border-radius: 10px 10px 10px 10px;
-        width: 200px;
+        width: 250px;
         font-weight: bold;
     }
 
@@ -326,6 +348,7 @@ textarea {
     &_text {
         margin: 0;
         margin-top: 10px;
+        margin-bottom: 10px;
         padding-left: 10px;
         text-align: left;
         font-weight: normal;

@@ -16,6 +16,7 @@ connection.connect(function (error) {
     console.error('Connexion MySQL échouée: ' + error.stack);
     return;
   }
+  console.error('Connexion MySQL réussie sur le service FEED !')
 });
 
 exports.createOnePost = async (req, res) => {
@@ -36,10 +37,24 @@ exports.createOnePost = async (req, res) => {
 
 exports.getAllPost = async (req, res) => {
   try {
-    connection.query(`SELECT postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`,
+    connection.query(`SELECT userId, postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`,
       function (_error, results, _fields) {
         return res.status(200).json(results);
       });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.updateOnePost = async (req, res) => {
+  try {
+    const text = req.body.text;
+    const postId = req.body.postId;
+
+    connection.query(`UPDATE posts SET text = (?) WHERE postId = (?)`, [text, postId]);
+    return res.status(200).json({ message: 'Publication mis à jour !' });
   }
   catch (error) {
     console.error(error);
@@ -63,12 +78,55 @@ exports.createOneComment = async (req, res) => {
   }
 };
 
+exports.updateOneComment = async (req, res) => {
+  try {
+    const comment = req.body.comment;
+    const commentId = req.body.commentId;
+
+    connection.query(`UPDATE comments SET comment = (?) WHERE commentId = (?)`, [comment, commentId]);
+    return res.status(200).json({ message: 'Commentaire mis à jour !' });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
 exports.getAllCommentByPost = async (req, res) => {
   try {
-    connection.query(`SELECT postId, userId, lastName, firstName, comment, commentDate FROM user JOIN comments ON user._id = comments.userId ORDER BY commentDate ASC`,
+    connection.query(`SELECT commentId, postId, userId, lastName, firstName, comment, commentDate FROM user JOIN comments ON user._id = comments.userId ORDER BY commentDate ASC`,
       function (_error, results, _fields) {
         return res.status(200).json(results);
       });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.deleteOnePost = async (req, res) => {
+  try {
+    const commentId = req.body.commentId;
+    const postId = req.body.postId;
+
+    connection.query(`DELETE FROM comments WHERE commentId = (?)`, [commentId], function (_error, _results, _fields){
+    connection.query(`DELETE FROM posts WHERE postId = (?)` [postId]);
+    return res.status(200).json({ message: 'Publication et ses commentaires supprimés !'})
+    });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.deleteOneCommentByPost = async (req, res) => {
+  try {
+    const commentId = req.body.commentId;
+
+    connection.query(`DELETE FROM comments WHERE commentId = (?)`, [commentId]);
+    return res.status(200).json({ message: 'Commentaire supprimé !' });
   }
   catch (error) {
     console.error(error);
