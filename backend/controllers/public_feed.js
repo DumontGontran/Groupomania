@@ -2,7 +2,10 @@ const jwt = require('jsonwebtoken');
 
 require('dotenv').config('../.env');
 const mysql = require('mysql2');
-/* const NewPost = require('../types/newPost'); */
+const CreatePost = require('../types/createPost');
+const ModifyPost = require('../types/modifyPost');
+const CreateComment = require('../types/createComment');
+const ModifyComment = require('../types/modifyComment');
 
 const connection = mysql.createConnection({
   host: `${process.env.MYSQL_HOST}`,
@@ -21,12 +24,15 @@ connection.connect(function (error) {
 
 exports.createOnePost = async (req, res) => {
   try {
-    const text = req.body.text;
-    const file = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    const post = new CreatePost({
+      'text': req.body.text
+    });
+
+    const file = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     const userId = req.body.userId;
     const date = new Date();
-
-    connection.query(`INSERT INTO posts (text, file, userId, date) VALUES (?,?,?,?)`, [text, file, userId, date]);
+    
+    connection.query(`INSERT INTO posts (text, file, userId, date) VALUES (?,?,?,?)`, [post.text, file, userId, date]);
     return res.status(201).json({ message: 'Publication réussie !' });
   }
   catch (error) {
@@ -38,12 +44,7 @@ exports.createOnePost = async (req, res) => {
 exports.getAllPost = async (req, res) => {
   try {
     connection.query(`SELECT userId, postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`,
-      async function (_error, results, _fields) {
-        /*for(feed of results){
-          let comment = await connection.query(`SELECT userId, postId, lastName, firstName, date, text, file FROM user JOIN posts ON user._id = posts.userId ORDER BY date DESC`);
-          feed.comment = comment;
-        }*/
-        // Get comments per feed to send -> [ { _id:..., txt:... AND comments: [..] } ]
+      function (_error, results, _fields) {
         return res.status(200).json(results);
       });
   }
@@ -55,10 +56,14 @@ exports.getAllPost = async (req, res) => {
 
 exports.updateOnePost = async (req, res) => {
   try {
-    const text = req.body.text;
-    const postId = req.body.postId;
+    const post = new ModifyPost({
+     'text': req.body.text
+    });
 
-    connection.query(`UPDATE posts SET text = (?) WHERE postId = (?)`, [text, postId]);
+    const postId = req.body.postId;
+    const updateDate = new Date();
+
+    connection.query(`UPDATE posts SET text = (?), date = (?) WHERE postId = (?)`, [post.text, updateDate, postId]);
     return res.status(200).json({ message: 'Publication mis à jour !' });
   }
   catch (error) {
@@ -69,12 +74,15 @@ exports.updateOnePost = async (req, res) => {
 
 exports.createOneComment = async (req, res) => {
   try {
-    const comment = req.body.comment;
+    const comment = new CreateComment({
+    'comment': req.body.comment
+    });
+
     const userId = req.body.userId;
     const postId = req.body.postId;
     const commentDate = new Date();
 
-    connection.query(`INSERT INTO comments (comment, userId, postId, commentDate) VALUES (?,?,?,?)`, [comment, userId, postId, commentDate]);
+    connection.query(`INSERT INTO comments (comment, userId, postId, commentDate) VALUES (?,?,?,?)`, [comment.comment, userId, postId, commentDate]);
     return res.status(201).json({ message: 'Commentaire envoyé !' });
   }
   catch (error) {
@@ -85,10 +93,14 @@ exports.createOneComment = async (req, res) => {
 
 exports.updateOneComment = async (req, res) => {
   try {
-    const comment = req.body.comment;
+    const comment = new ModifyComment({
+      'comment' : req.body.comment
+    });
+    
     const commentId = req.body.commentId;
+    const updateCommentDate = new Date(); 
 
-    connection.query(`UPDATE comments SET comment = (?) WHERE commentId = (?)`, [comment, commentId]);
+    connection.query(`UPDATE comments SET comment = (?), commentDate = (?) WHERE commentId = (?)`, [comment.comment, updateCommentDate, commentId]);
     return res.status(200).json({ message: 'Commentaire mis à jour !' });
   }
   catch (error) {
@@ -112,11 +124,11 @@ exports.getAllCommentByPost = async (req, res) => {
 
 exports.deleteOnePost = async (req, res) => {
   try {
-    const id = req.params.id;
+    let id = req.params.id;
 
     connection.query(`DELETE FROM comments WHERE postId = (?)`, [id]);
     connection.query(`DELETE FROM posts WHERE postId = (?)`, [id]);
-    return res.status(200).json({ message: 'Publication et ses commentaires supprimés !'})
+    return res.status(200).json({ message: 'Publication et ses commentaires supprimés !'});
   }
   catch (error) {
     console.error(error);
@@ -126,8 +138,8 @@ exports.deleteOnePost = async (req, res) => {
 
 exports.deleteOneComment = async (req, res) => {
   try {
-    const commentId = req.params.id;
- // && owner_id==req.auth.id
+    let commentId = req.params.id;
+    
     connection.query(`DELETE FROM comments WHERE commentId = (?)`, [commentId]);
     return res.status(200).json({ message: 'Commentaire supprimé !' });
   }

@@ -36,6 +36,16 @@ export default {
   methods: {
      updatePassword() {
       UserService.updateOnePasswordUser(this.password, this.confirmPassword)
+      .then(res => {
+          if (res) {
+            return this.message = 'Mot de passe mis à jour !'
+          }
+        })
+        .catch(error => {
+          if(error) {
+            return this.message = 'Mot de passe et/ou Confirmer mot de passe requis, doivent être identiques !'
+          }
+        })
     }
   }
 }

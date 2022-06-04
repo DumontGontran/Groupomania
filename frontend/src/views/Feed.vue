@@ -5,9 +5,9 @@
         <form class="flex flex_column" v-on:submit.prevent="sendPost" enctype="multipart/form-data">
             <label for="create_post">Créer une publication</label>
             <textarea type="text" rows="5" name="post_create" id="post_create" placeholder="Nouveau message ici"
-                v-model="text"></textarea>
+                v-model="text" required></textarea>
             <div class="navForm flex flex_column flex_align--center">
-                <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg"
+                <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/jpg" required
                     v-on:change="selectedFile" />
                 <input type="submit" value="Publier" id="post_submit">
             </div>
@@ -29,7 +29,7 @@
                 <div class="flex flex_row flex_between">
                     <p class="comment_comment" v-if="!post.edit_mode">{{ post.text }}</p>
                     <input v-show="post.userId == userId && post.edit_mode" type="text" class="comment_create"
-                        id="comment_create" v-model="post.text">
+                        id="comment_create" v-model="post.text" required>
                     <span v-if="post.edit_mode" class="flex flex_align--center">
                         <i class="fas fa-check" id="comment_submit" v-show="post.userId == userId"
                             v-on:click.prevent="post.edit_mode = false; modifyPost(post)"></i>
@@ -43,7 +43,7 @@
                 <form class="comment_form" enctype="application/json">
                     <input type="text" name="create_comment" id="comment_create" placeholder="Nouveau commentaire ici"
                         v-model="comment" />
-                    <i class="fas fa-share" id="comment_submit" v-on:click.prevent="sendComment(post.postId)"></i>
+                    <i class="fas fa-share" id="comment_submit" v-on:click.prevent="sendComment(post)"></i>
                 </form>
             </div>
             <div class="flex flex_column" v-for="(comment, index) in comments" :key="comment.id">
@@ -131,9 +131,9 @@ export default {
             console.log(postId)
             await UserService.deleteOnePost(postId)
         },
-        async sendComment(postId) {
-            console.log('postId', postId)
-            await UserService.createComment(this.comment, postId)
+        async sendComment(post) {
+            console.log('postId', post.postId)
+            await UserService.createComment(this.comment, post.postId)
         },
         async modifyComment(comment) {
             await UserService.updateOneComment(comment.commentId, comment.comment)

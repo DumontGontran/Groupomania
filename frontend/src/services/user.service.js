@@ -54,7 +54,9 @@ export default {
                 localStorage.setItem('token', res.data.token),
                 state.message = 'Connexion réussie !',
                 setTimeout(() => {
-                    router.push('/feed')
+                    router.push('/feed'),
+                        userId,
+                        token
                 }, 1000)
         }
         catch (error) {
@@ -80,9 +82,7 @@ export default {
                 }, 1000)
         }
         catch (error) {
-            return error,
-                console.log(error),
-                router.push('/login')
+            return error
         }
     },
 
@@ -104,7 +104,7 @@ export default {
         }
     },
 
-    async getOneProfilUser(userId) {
+    async getOneProfilUser() {
         try {
             const res = await axios.get(`${API_URL}/user/profil/${userId}`, this.header())
             return res.data
@@ -129,7 +129,7 @@ export default {
                 router.go(0)
         } catch (error) {
             return error,
-                router.push('/login')
+            router.go(0)
         }
     },
 
@@ -158,7 +158,7 @@ export default {
 
             const res = await axios.post(`${API_URL}/feed/comment`, newComment, header)
             return res.data,
-            router.go(0)
+                router.go(0)
         } catch (error) {
             return error
         }
@@ -177,9 +177,11 @@ export default {
             console.log('Modification du Commentaire', updateComment)
 
             const res = await axios.patch(`${API_URL}/feed/comment/${commentId}`, updateComment, header)
-            return res.data
+            return res.data,
+            router.go(0)
         } catch (error) {
-            return error
+            return error,
+            router.go(0)
         }
     },
 
@@ -196,9 +198,11 @@ export default {
             console.log('Modification de la publication', updatePost)
 
             const res = await axios.patch(`${API_URL}/feed/${postId}`, updatePost, header)
-            return res.data
+            return res.data,
+            router.go(0)
         } catch (error) {
-            return error
+            return error,
+            router.go(0)
         }
     },
 
@@ -219,7 +223,7 @@ export default {
 
             const res = await axios.delete(`${API_URL}/feed/${postId}`, header)
             return res.data,
-            router.go(0)
+                router.go(0)
         } catch (error) {
             return error
         }
@@ -231,7 +235,20 @@ export default {
             header.headers['content-type'] = 'application/json'
             const res = await axios.delete(`${API_URL}/feed/comment/${commentId}`, header)
             return res.data,
-            router.go(0)
+                router.go(0)
+        } catch (error) {
+            return error
+        }
+    },
+
+    async deleteOneUser() {
+        try {
+            let header = this.header()
+            header.headers['content-type'] = 'application/json'
+            const res = await axios.delete(`${API_URL}/user/profil/${userId}`, header)
+            return res.data,
+                localStorage.clear(),
+                router.push('/register')
         } catch (error) {
             return error
         }

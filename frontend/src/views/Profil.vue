@@ -1,5 +1,5 @@
 <template>
-<Header />
+  <Header />
   <h2>Profil</h2>
   <form class="flex flex_column" v-for="user in users" :key="user.id">
     <h3>Gestion du Profil</h3>
@@ -17,7 +17,7 @@
       <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updateProfil" />
       <router-link class="linkForm" to="/profil/password">Gestion du mot de passe</router-link>
     </div>
-    <router-link class="linkForm--delete" to="/register" v-on:click.prevent="deleteOneUser">Supprimer le compte utilisateur</router-link>
+    <span class="linkForm--delete" v-on:click.prevent="deleteUser">Supprimer le compte utilisateur</span>
     <p class="message">{{ message }}</p>
   </form>
 </template>
@@ -29,7 +29,7 @@ import UserService from '../services/user.service'
 export default {
   name: "ProfilForm",
   components: {
-      Header
+    Header
   },
   data() {
     return {
@@ -38,15 +38,26 @@ export default {
     }
   },
   async mounted() {
-    const userId = localStorage.getItem('userId')
-    
-    this.users = await UserService.getOneProfilUser(userId)
+    this.users = await UserService.getOneProfilUser()
     console.log('GET Profil', this.users[0])
   },
   methods: {
-    updateProfil() {
-      UserService.updateOneProfilUser(this.users[0])
+    async updateProfil() {
+      await UserService.updateOneProfilUser(this.users[0])
+        .then(res => {
+          if (res) {
+            return this.message = 'Profil mis à jour !'
+          }
+        })
+        .catch(error => {
+          if(error) {
+            return this.message = 'Nom et/ou prénom requis !'
+          }
+        })
       console.log('UPDATE Profil', this.users[0])
+    },
+    async deleteUser() {
+      await UserService.deleteOneUser()
     }
   }
 }
@@ -156,8 +167,9 @@ input {
     font-weight: bold;
   }
 
-  &--delete{
+  &--delete {
     color: red;
+    cursor: pointer;
 
     &:hover {
       font-weight: bold;

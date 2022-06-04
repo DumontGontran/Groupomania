@@ -119,11 +119,27 @@ exports.getOneProfilUser = async (req, res) => {
         throw res.status(404).json({ message: 'Aucun compte n\'existe avec cet id !' });
       }
       return res.status(200).json([{
+        userId: results[0].userId,
         lastName: results[0].lastName,
         firstName: results[0].firstName,
         email: results[0].email
       }]);
     });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur interne !' });
+  }
+};
+
+exports.deleteOneUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    connection.query(`DELETE FROM comments WHERE userId = (?)`, [id]);
+    connection.query(`DELETE FROM posts WHERE userId = (?)`, [id]);
+    connection.query(`DELETE FROM user WHERE _id = (?)`, [id]);
+    return res.status(200).json({ message: 'Compte utilisateur et son contenu supprimés !'});
   }
   catch (error) {
     console.error(error);

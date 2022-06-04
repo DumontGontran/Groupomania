@@ -1,7 +1,7 @@
-class CreatePost {
+class ModifyPost {
     constructor(options){
        this.text = options.text || "";
     }
  }
 
- module.exports = CreatePost;
+ module.exports = ModifyPost;

@@ -1,9 +1,19 @@
 const yup = require('yup');
 
 module.exports = {
-    post: yup.object({
-        text: yup.string(),
-        file: yup.string(),
-        userId: yup.number().integer()
+    createPost: yup.object({
+        text: yup.string().max(100).required()
+    }),
+
+    modifyPost: yup.object({
+        text: yup.string().max(100).required()
+    }),
+
+    createComment: yup.object({
+        comment: yup.string().max(100).required()
+    }),
+
+    modifyComment: yup.object({
+        comment: yup.string().max(100).required()
     }),
 };
