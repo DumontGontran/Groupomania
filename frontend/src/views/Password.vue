@@ -1,14 +1,14 @@
 <template>
-<Header />
+  <Header />
   <h2>Profil</h2>
   <form class="flex flex_column">
     <h3>Gestion du mot de passe</h3>
     <label for="password">Nouveau mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="password" id="password"
-      v-model="password" placeholder="Motdepasse" />
+      v-model="password" placeholder="Motdepasse" required />
     <label for="confirmPassword">Confirmer mot de passe:</label>
     <input class="flex flex_justify--center flex_align--center" type="password" name="confirmPassword"
-      id="confirmPassword" v-model="confirmPassword" placeholder="Motdepasse" />
+      id="confirmPassword" v-model="confirmPassword" placeholder="Motdepasse" required />
     <div class="navForm flex flex_align--center flex_justify--center">
       <input type="submit" value="Modifier" id="submit" v-on:click.prevent="updatePassword" />
       <router-link class="linkForm" to="/profil">Gestion du Profil</router-link>
@@ -24,7 +24,7 @@ import UserService from '../services/user.service'
 export default {
   name: "PasswordForm",
   components: {
-      Header
+    Header
   },
   data() {
     return {
@@ -34,18 +34,23 @@ export default {
     }
   },
   methods: {
-     updatePassword() {
+    updatePassword() {
       UserService.updateOnePasswordUser(this.password, this.confirmPassword)
-      .then(res => {
-          if (res) {
-            return this.message = 'Mot de passe mis à jour !'
-          }
-        })
-        .catch(error => {
-          if(error) {
-            return this.message = 'Mot de passe et/ou Confirmer mot de passe requis, doivent être identiques !'
-          }
-        })
+      if (this.password == '' || this.confirmPassword == '') {
+        return this.message = 'Mot de passe requis !'
+      }
+      else if (this.password !== this.confirmPassword) {
+        return this.message = 'Doivent être identique !'
+      }
+      else if (this.password.length < 8 || this.confirmPassword.length < 8) {
+        return this.message = 'Doit contenir minimum 8 caractères !'
+      }
+      else if (this.password.length > 16 || this.confirmPassword.length > 16) {
+        return this.message = 'Doit contenir maximum 16 caractères !'
+      }
+      else {
+        return this.message = 'Mot de passe mis à jour !'
+      }
     }
   }
 }

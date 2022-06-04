@@ -44,17 +44,19 @@ export default {
   methods: {
     async updateProfil() {
       await UserService.updateOneProfilUser(this.users[0])
-        .then(res => {
-          if (res) {
-            return this.message = 'Profil mis à jour !'
-          }
-        })
-        .catch(error => {
-          if(error) {
-            return this.message = 'Nom et/ou prénom requis !'
-          }
-        })
-      console.log('UPDATE Profil', this.users[0])
+      if (this.users[0].lastName == '' && this.users[0].firstName == '') {
+        return this.message = 'Nom et prénom requis !'
+      }
+      else if (this.users[0].lastName == '') {
+        return this.message = 'Nom requis !'
+      }
+      else if (this.users[0].firstName == '') {
+        return this.message = 'Prénom requis !'
+      }
+      else {
+        return this.message = 'Profil mis à jour !',
+          console.log('UPDATE Profil', this.users[0])
+      }
     },
     async deleteUser() {
       await UserService.deleteOneUser()
