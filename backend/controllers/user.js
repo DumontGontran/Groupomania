@@ -150,7 +150,6 @@ exports.deleteOneUser = async (req, res) => {
     const userId = req.params.id;
 
     connection.query(`SELECT file FROM posts WHERE userId = (?)`, [userId], function (_error, results, _fields) {
-      console.log({ results });
       for (i = 0; i < results.length; i++) {
         fs.unlink(`images/${results[i].file.split('/images/')[1]}`, async () => {
         });
