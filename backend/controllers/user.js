@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 require('dotenv').config('../.env');
 const mysql = require('mysql2');
@@ -31,15 +32,26 @@ exports.register = async (req, res) => {
       if (results.length == 1) {
         return res.status(409).json({ message: 'Un compte existe déjà avec cet email !' });
       }
-
-    if (req.body.confirmPassword !== newUser.password) {
-      throw res.status(409).json({ message: 'Les mots de passe doivent être identiques !' });
-    } else {
-      const hash = await bcrypt.hash(newUser.password, 10);
-      connection.query(`INSERT INTO user (lastName, firstName, email, password) VALUES (?,?,?,?)`, [newUser.lastName, newUser.firstName, newUser.email, hash]);
-      return res.status(201).json({ message: 'Inscription réussie !' });
-    }
-  });
+      if(req.body.lastName == '' && req.body.firstName == ''){
+        throw res.status(400).json({ message: 'Nom et prénom requis !' });
+      }
+      else if(req.body.lastName ==''){
+        throw res.status(400).json({ message: 'Nom requis !' });
+      }
+      else if(req.body.firstName == ''){
+        throw res.status(400).json({ message: 'Prénom requis !' });
+      }
+      else if(req.body.confirmPassword == '' || req.body.password == ''){
+        throw res.status(400).json({ message: 'mot de passe requis !' });
+      }
+      else if (req.body.confirmPassword !== newUser.password) {
+        throw res.status(400).json({ message: 'Les mots de passe doivent être identiques !' });
+      } else {
+        const hash = await bcrypt.hash(newUser.password, 10);
+        connection.query(`INSERT INTO user (lastName, firstName, email, password) VALUES (?,?,?,?)`, [newUser.lastName, newUser.firstName, newUser.email, hash]);
+        return res.status(201).json({ message: 'Inscription réussie !' });
+      }
+    });
   }
   catch (error) {
     console.error(error);
@@ -81,7 +93,7 @@ exports.updateOneProfilUser = async (req, res) => {
   try {
     let userId = req.params.id;
     const user = new UpdateProfilUser(req.body);
-
+    
     connection.query(`UPDATE user SET lastName = (?), firstName = (?) WHERE _id = (?)`, [user.lastName, user.firstName, userId]);
     return res.status(200).json({ message: 'Profil mis à jour !' });
   }
@@ -96,7 +108,7 @@ exports.updateOnePasswordUser = async (req, res) => {
     let userId = req.params.id;
     const user = new UpdatePasswordUser(req.body);
 
-    if (req.body.confirmPassword !== user.password) {
+    if (user.confirmPassword !== user.password) {
       throw res.status(409).json({ message: 'Les mots de passe doivent être identiques !' });
     } else {
       const hash = await bcrypt.hash(user.password, 10);
@@ -119,10 +131,11 @@ exports.getOneProfilUser = async (req, res) => {
         throw res.status(404).json({ message: 'Aucun compte n\'existe avec cet id !' });
       }
       return res.status(200).json([{
-        userId: results[0].userId,
+        userId: results[0]._id,
         lastName: results[0].lastName,
         firstName: results[0].firstName,
-        email: results[0].email
+        email: results[0].email,
+        role: results[0].role_id
       }]);
     });
   }
@@ -134,12 +147,16 @@ exports.getOneProfilUser = async (req, res) => {
 
 exports.deleteOneUser = async (req, res) => {
   try {
-    const id = req.params.id;
+    const userId = req.params.id;
 
-    connection.query(`DELETE FROM comments WHERE userId = (?)`, [id]);
-    connection.query(`DELETE FROM posts WHERE userId = (?)`, [id]);
-    connection.query(`DELETE FROM user WHERE _id = (?)`, [id]);
-    return res.status(200).json({ message: 'Compte utilisateur et son contenu supprimés !'});
+    connection.query(`SELECT file FROM posts WHERE userId = (?)`, [userId], function (_error, results, _fields) {
+      fs.unlink(`images/${results.file.split('/images/')[1]}`, async () => {
+        connection.query(`DELETE FROM comments WHERE userId = (?)`, [userId]);
+        connection.query(`DELETE FROM posts WHERE userId = (?)`, [userId]);
+        connection.query(`DELETE FROM user WHERE _id = (?)`, [userId]);
+        return res.status(200).json({ message: 'Compte utilisateur et son contenu supprimés !' });
+      });
+    });
   }
   catch (error) {
     console.error(error);

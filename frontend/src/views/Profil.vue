@@ -43,7 +43,6 @@ export default {
   },
   methods: {
     async updateProfil() {
-      await UserService.updateOneProfilUser(this.users[0])
       if (this.users[0].lastName == '' && this.users[0].firstName == '') {
         return this.message = 'Nom et prénom requis !'
       }
@@ -54,6 +53,7 @@ export default {
         return this.message = 'Prénom requis !'
       }
       else {
+        await UserService.updateOneProfilUser(this.users[0])
         return this.message = 'Profil mis à jour !',
           console.log('UPDATE Profil', this.users[0])
       }
@@ -88,7 +88,7 @@ form {
   border: 3px solid black;
   background-color: #FFD7D7;
   border-radius: 10px 10px 10px 10px;
-  width: 400px;
+  width: 350px;
 }
 
 h2 {
@@ -136,7 +136,7 @@ input {
   font-weight: bold;
   border: 1px solid black;
   border-radius: 5px 5px 5px 5px;
-  width: 150px;
+  width: 110px;
   height: 50px;
 
   &:disabled {

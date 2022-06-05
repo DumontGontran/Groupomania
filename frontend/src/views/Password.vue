@@ -34,8 +34,7 @@ export default {
     }
   },
   methods: {
-    updatePassword() {
-      UserService.updateOnePasswordUser(this.password, this.confirmPassword)
+    async updatePassword() {
       if (this.password == '' || this.confirmPassword == '') {
         return this.message = 'Mot de passe requis !'
       }
@@ -49,6 +48,7 @@ export default {
         return this.message = 'Doit contenir maximum 16 caractères !'
       }
       else {
+        await UserService.updateOnePasswordUser(this.password, this.confirmPassword)
         return this.message = 'Mot de passe mis à jour !'
       }
     }
@@ -85,7 +85,7 @@ form {
   border: 3px solid black;
   background-color: #FFD7D7;
   border-radius: 10px 10px 10px 10px;
-  width: 400px;
+  width: 350px;
 }
 
 h2 {
@@ -133,7 +133,7 @@ input {
   font-weight: bold;
   border: 1px solid black;
   border-radius: 5px 5px 5px 5px;
-  width: 150px;
+  width: 110px;
   height: 50px;
 
   &:disabled {

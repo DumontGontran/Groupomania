@@ -74,7 +74,7 @@ form {
   border: 3px solid black;
   background-color: #FFD7D7;
   border-radius: 10px 10px 10px 10px;
-  width: 400px;
+  width: 350px;
 }
 
 h2 {
@@ -115,7 +115,7 @@ input {
   font-weight: bold;
   border: 1px solid black;
   border-radius: 5px 5px 5px 5px;
-  width: 150px;
+  width: 110px;
   height: 50px;
   &:disabled {
     background-color: lightgrey;

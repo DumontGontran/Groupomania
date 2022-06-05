@@ -126,10 +126,11 @@ export default {
 
             const res = await axios.post(`${API_URL}/feed/`, newPost, header)
             return res.data,
-                router.go(0)
+                setTimeout(() => {
+                    router.go(0)
+                }, 1500)
         } catch (error) {
-            return error,
-            router.go(0)
+            return error
         }
     },
 
@@ -158,7 +159,9 @@ export default {
 
             const res = await axios.post(`${API_URL}/feed/comment`, newComment, header)
             return res.data,
-                router.go(0)
+                setTimeout(() => {
+                    router.go(0)
+                }, 1500)
         } catch (error) {
             return error
         }
@@ -177,8 +180,7 @@ export default {
             console.log('Modification du Commentaire', updateComment)
 
             const res = await axios.patch(`${API_URL}/feed/comment/${commentId}`, updateComment, header)
-            return res.data,
-            router.go(0)
+            return res.data
         } catch (error) {
             return error,
             router.go(0)
@@ -198,8 +200,7 @@ export default {
             console.log('Modification de la publication', updatePost)
 
             const res = await axios.patch(`${API_URL}/feed/${postId}`, updatePost, header)
-            return res.data,
-            router.go(0)
+            return res.data
         } catch (error) {
             return error,
             router.go(0)

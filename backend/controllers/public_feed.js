@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 require('dotenv').config('../.env');
 const mysql = require('mysql2');
@@ -31,7 +32,7 @@ exports.createOnePost = async (req, res) => {
     const file = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     const userId = req.body.userId;
     const date = new Date();
-    
+
     connection.query(`INSERT INTO posts (text, file, userId, date) VALUES (?,?,?,?)`, [post.text, file, userId, date]);
     return res.status(201).json({ message: 'Publication réussie !' });
   }
@@ -57,7 +58,7 @@ exports.getAllPost = async (req, res) => {
 exports.updateOnePost = async (req, res) => {
   try {
     const post = new ModifyPost({
-     'text': req.body.text
+      'text': req.body.text
     });
 
     const postId = req.body.postId;
@@ -75,7 +76,7 @@ exports.updateOnePost = async (req, res) => {
 exports.createOneComment = async (req, res) => {
   try {
     const comment = new CreateComment({
-    'comment': req.body.comment
+      'comment': req.body.comment
     });
 
     const userId = req.body.userId;
@@ -94,11 +95,11 @@ exports.createOneComment = async (req, res) => {
 exports.updateOneComment = async (req, res) => {
   try {
     const comment = new ModifyComment({
-      'comment' : req.body.comment
+      'comment': req.body.comment
     });
-    
+
     const commentId = req.body.commentId;
-    const updateCommentDate = new Date(); 
+    const updateCommentDate = new Date();
 
     connection.query(`UPDATE comments SET comment = (?), commentDate = (?) WHERE commentId = (?)`, [comment.comment, updateCommentDate, commentId]);
     return res.status(200).json({ message: 'Commentaire mis à jour !' });
@@ -124,11 +125,15 @@ exports.getAllCommentByPost = async (req, res) => {
 
 exports.deleteOnePost = async (req, res) => {
   try {
-    let id = req.params.id;
+    let postId = req.params.id;
 
-    connection.query(`DELETE FROM comments WHERE postId = (?)`, [id]);
-    connection.query(`DELETE FROM posts WHERE postId = (?)`, [id]);
-    return res.status(200).json({ message: 'Publication et ses commentaires supprimés !'});
+    connection.query(`SELECT file FROM posts WHERE postId = (?)`, [postId], function (_error, results, _fields) {
+      fs.unlink(`images/${results[0].file.split('/images/')[1]}`, async () => {
+        connection.query(`DELETE FROM comments WHERE postId = (?)`, [postId]);
+        connection.query(`DELETE FROM posts WHERE postId = (?)`, [postId]);
+        return res.status(200).json({ message: 'Publication et ses commentaires supprimés !' });
+      });
+    });
   }
   catch (error) {
     console.error(error);
@@ -139,7 +144,7 @@ exports.deleteOnePost = async (req, res) => {
 exports.deleteOneComment = async (req, res) => {
   try {
     let commentId = req.params.id;
-    
+
     connection.query(`DELETE FROM comments WHERE commentId = (?)`, [commentId]);
     return res.status(200).json({ message: 'Commentaire supprimé !' });
   }

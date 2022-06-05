@@ -11,40 +11,45 @@
                     v-on:change="selectedFile" />
                 <input type="submit" value="Publier" id="post_submit">
             </div>
+            <p class="message">{{ createPostMessage }}</p>
         </form>
     </section>
     <article v-for="(post, index) in posts" :key="post.id">
-        <div class="flex flex_column post_body">
+        <div class="flex flex_column post_body" v-for="(user, index) in users" :key="user.id">
             <div>
                 <div class="flex flex_row flex_between"
                     :title="'Créé le ' + dateFormat[index] + ' à ' + timeFormat[index]">
                     <p class="post_lastname post_firstname">{{ post.lastName }} {{ post.firstName }}</p>
                     <span v-if="!post.edit_mode">
-                        <i class="fas fa-edit" id="comment_submit" v-show="post.userId == userId"
+                        <i class="fas fa-edit" id="comment_submit" v-show="users[0].role == 1 || post.userId == users[0].userId"
                             v-on:click.prevent="post.edit_mode = true; post.origin_value = post.text"></i>
-                        <i class="fas fa-trash-alt" v-show="post.userId == userId"
+                        <i class="fas fa-trash-alt" v-show="users[0].role == 1 || post.userId == users[0].userId"
                             v-on:click.prevent="deletePost(post.postId)"></i>
                     </span>
                 </div>
                 <div class="flex flex_row flex_between">
                     <p class="comment_comment" v-if="!post.edit_mode">{{ post.text }}</p>
-                    <input v-show="post.userId == userId && post.edit_mode" type="text" class="comment_create"
+                    <input v-show="users[0].role == 1 && post.edit_mode || post.userId == users[0].userId && post.edit_mode" type="text" class="comment_create"
                         id="comment_create" v-model="post.text" required>
                     <span v-if="post.edit_mode" class="flex flex_align--center">
-                        <i class="fas fa-check" id="comment_submit" v-show="post.userId == userId"
+                        <i class="fas fa-check" id="comment_submit" v-show="users[0].role == 1 || post.userId == users[0].userId"
                             v-on:click.prevent="post.edit_mode = false; modifyPost(post)"></i>
-                        <i class="fas fa-times" id="comment_submit" v-show="post.userId == userId"
+                        <i class="fas fa-times" id="comment_submit" v-show="users[0].role == 1 || post.userId == users[0].userId"
                             v-on:click.prevent="post.edit_mode = false; post.text = post.origin_value"></i>
                     </span>
                 </div>
+                <p class="message">{{ modifyPostMessage }}</p>
             </div>
             <img class="post_image flex" :src="post.file" alt="image de publication">
-            <div class="flex flex_row flex_between post_foot">
-                <form class="comment_form" enctype="application/json">
-                    <input type="text" name="create_comment" id="comment_create" placeholder="Nouveau commentaire ici"
-                        v-model="comment" />
-                    <i class="fas fa-share" id="comment_submit" v-on:click.prevent="sendComment(post)"></i>
-                </form>
+            <div class="flex flex_column">
+                <div class="flex flex_row flex_between post_foot">
+                    <form class="comment_form" enctype="application/json">
+                        <input type="text" name="create_comment" id="comment_create"
+                            placeholder="Nouveau commentaire ici" v-model="comment" />
+                        <i class="fas fa-share" id="comment_submit" v-on:click.prevent="sendComment(post)"></i>
+                    </form>
+                </div>
+                <p class="message">{{ createCommentMessage }}</p>
             </div>
             <div class="flex flex_column" v-for="(comment, index) in comments" :key="comment.id">
                 <div v-if="post.postId == comment.postId">
@@ -53,24 +58,25 @@
                         <p class="comment_lastname comment_firstname">{{ comment.lastName }} {{ comment.firstName }}</p>
 
                         <span v-if="!comment.edit_mode">
-                            <i class="fas fa-edit" id="comment_submit" v-show="comment.userId == userId"
+                            <i class="fas fa-edit" id="comment_submit" v-show="users[0].role == 1 || comment.userId == users[0].userId"
                                 v-on:click.prevent="comment.edit_mode = true; comment.origin_value = comment.comment"></i>
-                            <i class="fas fa-trash-alt" v-show="comment.userId == userId"
+                            <i class="fas fa-trash-alt" v-show="users[0].role == 1 || comment.userId == users[0].userId"
                                 v-on:click.prevent="deleteComment(comment.commentId)"></i>
                         </span>
                     </div>
                     <div class="flex flex_row flex_between">
                         <p class="comment_comment" v-if="!comment.edit_mode">{{ comment.comment }}</p>
-                        <input v-show="comment.userId == userId && comment.edit_mode" type="text" class="comment_create"
+                        <input v-show="users[0].role == 1 && comment.edit_mode || comment.userId == users[0].userId && comment.edit_mode" type="text" class="comment_create"
                             id="comment_create" v-model="comment.comment">
                         <span v-if="comment.edit_mode" class="flex flex_align--center">
-                            <i class="fas fa-check" id="comment_submit" v-show="comment.userId == userId"
+                            <i class="fas fa-check" id="comment_submit" v-show="users[0].role == 1 || comment.userId == users[0].userId"
                                 v-on:click.prevent="comment.edit_mode = false; modifyComment(comment)"></i>
-                            <i class="fas fa-times" id="comment_submit" v-show="comment.userId == userId"
+                            <i class="fas fa-times" id="comment_submit" v-show="users[0].role == 1 || comment.userId == users[0].userId"
                                 v-on:click.prevent="comment.edit_mode = false; comment.comment = comment.origin_value"></i>
                         </span>
                     </div>
                 </div>
+                <p class="message">{{ modifyCommentMessage }}</p>
             </div>
         </div>
     </article>
@@ -87,12 +93,16 @@ export default {
     },
     data() {
         return {
-            userId: localStorage.getItem('userId'),
+            users:[],
             posts: [],
             comments: [],
             text: '',
             file: '',
-            comment: ''
+            comment: '',
+            createPostMessage: '',
+            createCommentMessage: '',
+            modifyPostMessage: '',
+            modifyCommentMessage: ''
         }
     },
     computed: {
@@ -110,6 +120,9 @@ export default {
         }
     },
     async mounted() {
+        this.users = await UserService.getOneProfilUser()
+        console.log('GET USER', this.users)
+
         this.posts = await UserService.getAllPost()
         console.log('GET POSTS', this.posts)
 
@@ -123,9 +136,32 @@ export default {
         },
         async sendPost() {
             await UserService.createPost(this.text, this.file)
+            if(this.text == '' && this.file == ''){
+                return this.createPostMessage = 'Texte et image requis !'
+            }
+            else if(this.text == ''){
+                return this.createPostMessage = 'Texte requis !'
+            }
+            else if(this.text.length > 100){
+                return this.createPostMessage = 'Texte doit contenir maximum 100 caractères !'
+            }
+            else if(this.file == ''){
+                return this.createPostMessage = 'Image requise !'
+            }
         },
         async modifyPost(post) {
             await UserService.updateOnePost(post.postId, post.text)
+            if(post.text == ''){
+                return this.modifyPostMessage = 'Texte requis !',
+                post.text = post.origin_value
+            }
+            else if(post.text.length > 100){
+                return this.modifyPostMessage = 'Texte doit contenir maximum 100 caractères !',
+                post.text = post.origin_value
+            }
+            else {
+                return this.modifyPostMessage = 'Texte mis à jour !'
+            }
         },
         async deletePost(postId) {
             console.log(postId)
