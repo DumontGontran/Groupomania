@@ -34,7 +34,6 @@ export default {
         }
         catch (error) {
             return error,
-                console.log(error),
                 state.message = error.response.data.message
         }
     },
@@ -54,14 +53,13 @@ export default {
                 localStorage.setItem('token', res.data.token),
                 state.message = 'Connexion réussie !',
                 setTimeout(() => {
-                    router.push('/feed'),
-                        userId,
-                        token
+                    userId,
+                    token,
+                    router.push('/feed')
                 }, 1000)
         }
         catch (error) {
             return error,
-                console.log(error),
                 state.message = error.response.data.message
         }
     },
@@ -126,9 +124,7 @@ export default {
 
             const res = await axios.post(`${API_URL}/feed/`, newPost, header)
             return res.data,
-                setTimeout(() => {
-                    router.go(0)
-                }, 1500)
+                router.go(0)
         } catch (error) {
             return error
         }
@@ -159,9 +155,7 @@ export default {
 
             const res = await axios.post(`${API_URL}/feed/comment`, newComment, header)
             return res.data,
-                setTimeout(() => {
-                    router.go(0)
-                }, 1500)
+                router.go(0)
         } catch (error) {
             return error
         }
@@ -183,7 +177,7 @@ export default {
             return res.data
         } catch (error) {
             return error,
-            router.go(0)
+                router.go(0)
         }
     },
 
@@ -203,7 +197,7 @@ export default {
             return res.data
         } catch (error) {
             return error,
-            router.go(0)
+                router.go(0)
         }
     },
 

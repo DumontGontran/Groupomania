@@ -18,7 +18,6 @@ export default {
   methods:{
     logout(){
       localStorage.clear()
-      window.location.reload()
     }
   }
 };

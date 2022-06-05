@@ -11,7 +11,6 @@
                     v-on:change="selectedFile" />
                 <input type="submit" value="Publier" id="post_submit">
             </div>
-            <p class="message">{{ createPostMessage }}</p>
         </form>
     </section>
     <article v-for="(post, index) in posts" :key="post.id">
@@ -38,7 +37,6 @@
                             v-on:click.prevent="post.edit_mode = false; post.text = post.origin_value"></i>
                     </span>
                 </div>
-                <p class="message">{{ modifyPostMessage }}</p>
             </div>
             <img class="post_image flex" :src="post.file" alt="image de publication">
             <div class="flex flex_column">
@@ -49,7 +47,6 @@
                         <i class="fas fa-share" id="comment_submit" v-on:click.prevent="sendComment(post)"></i>
                     </form>
                 </div>
-                <p class="message">{{ createCommentMessage }}</p>
             </div>
             <div class="flex flex_column" v-for="(comment, index) in comments" :key="comment.id">
                 <div v-if="post.postId == comment.postId">
@@ -76,7 +73,6 @@
                         </span>
                     </div>
                 </div>
-                <p class="message">{{ modifyCommentMessage }}</p>
             </div>
         </div>
     </article>
@@ -98,11 +94,7 @@ export default {
             comments: [],
             text: '',
             file: '',
-            comment: '',
-            createPostMessage: '',
-            createCommentMessage: '',
-            modifyPostMessage: '',
-            modifyCommentMessage: ''
+            comment: ''
         }
     },
     computed: {
@@ -121,61 +113,31 @@ export default {
     },
     async mounted() {
         this.users = await UserService.getOneProfilUser()
-        console.log('GET USER', this.users)
 
         this.posts = await UserService.getAllPost()
-        console.log('GET POSTS', this.posts)
 
         this.comments = await UserService.getAllCommentsByPost()
-        console.log('GET COMMENTS BY POST', this.comments)
     },
     methods: {
         selectedFile(event) {
             this.file = event.target.files[0]
-            console.log('File to Send', this.file)
         },
         async sendPost() {
             await UserService.createPost(this.text, this.file)
-            if(this.text == '' && this.file == ''){
-                return this.createPostMessage = 'Texte et image requis !'
-            }
-            else if(this.text == ''){
-                return this.createPostMessage = 'Texte requis !'
-            }
-            else if(this.text.length > 100){
-                return this.createPostMessage = 'Texte doit contenir maximum 100 caractères !'
-            }
-            else if(this.file == ''){
-                return this.createPostMessage = 'Image requise !'
-            }
         },
         async modifyPost(post) {
             await UserService.updateOnePost(post.postId, post.text)
-            if(post.text == ''){
-                return this.modifyPostMessage = 'Texte requis !',
-                post.text = post.origin_value
-            }
-            else if(post.text.length > 100){
-                return this.modifyPostMessage = 'Texte doit contenir maximum 100 caractères !',
-                post.text = post.origin_value
-            }
-            else {
-                return this.modifyPostMessage = 'Texte mis à jour !'
-            }
         },
         async deletePost(postId) {
-            console.log(postId)
             await UserService.deleteOnePost(postId)
         },
         async sendComment(post) {
-            console.log('postId', post.postId)
             await UserService.createComment(this.comment, post.postId)
         },
         async modifyComment(comment) {
             await UserService.updateOneComment(comment.commentId, comment.comment)
         },
         async deleteComment(commentId) {
-            console.log(commentId)
             await UserService.deleteOneComment(commentId)
         }
     }

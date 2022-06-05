@@ -39,7 +39,6 @@ export default {
   },
   async mounted() {
     this.users = await UserService.getOneProfilUser()
-    console.log('GET Profil', this.users[0])
   },
   methods: {
     async updateProfil() {
@@ -54,8 +53,7 @@ export default {
       }
       else {
         await UserService.updateOneProfilUser(this.users[0])
-        return this.message = 'Profil mis à jour !',
-          console.log('UPDATE Profil', this.users[0])
+        return this.message = 'Profil mis à jour !'
       }
     },
     async deleteUser() {

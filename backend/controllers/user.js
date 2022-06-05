@@ -32,16 +32,16 @@ exports.register = async (req, res) => {
       if (results.length == 1) {
         return res.status(409).json({ message: 'Un compte existe déjà avec cet email !' });
       }
-      if(req.body.lastName == '' && req.body.firstName == ''){
+      if (req.body.lastName == '' && req.body.firstName == '') {
         throw res.status(400).json({ message: 'Nom et prénom requis !' });
       }
-      else if(req.body.lastName ==''){
+      else if (req.body.lastName == '') {
         throw res.status(400).json({ message: 'Nom requis !' });
       }
-      else if(req.body.firstName == ''){
+      else if (req.body.firstName == '') {
         throw res.status(400).json({ message: 'Prénom requis !' });
       }
-      else if(req.body.confirmPassword == '' || req.body.password == ''){
+      else if (req.body.confirmPassword == '' || req.body.password == '') {
         throw res.status(400).json({ message: 'mot de passe requis !' });
       }
       else if (req.body.confirmPassword !== newUser.password) {
@@ -93,7 +93,7 @@ exports.updateOneProfilUser = async (req, res) => {
   try {
     let userId = req.params.id;
     const user = new UpdateProfilUser(req.body);
-    
+
     connection.query(`UPDATE user SET lastName = (?), firstName = (?) WHERE _id = (?)`, [user.lastName, user.firstName, userId]);
     return res.status(200).json({ message: 'Profil mis à jour !' });
   }
@@ -150,12 +150,15 @@ exports.deleteOneUser = async (req, res) => {
     const userId = req.params.id;
 
     connection.query(`SELECT file FROM posts WHERE userId = (?)`, [userId], function (_error, results, _fields) {
-      fs.unlink(`images/${results.file.split('/images/')[1]}`, async () => {
-        connection.query(`DELETE FROM comments WHERE userId = (?)`, [userId]);
-        connection.query(`DELETE FROM posts WHERE userId = (?)`, [userId]);
-        connection.query(`DELETE FROM user WHERE _id = (?)`, [userId]);
-        return res.status(200).json({ message: 'Compte utilisateur et son contenu supprimés !' });
-      });
+      console.log({ results });
+      for (i = 0; i < results.length; i++) {
+        fs.unlink(`images/${results[i].file.split('/images/')[1]}`, async () => {
+        });
+      }
+      connection.query(`DELETE FROM comments WHERE userId = (?)`, [userId]);
+      connection.query(`DELETE FROM posts WHERE userId = (?)`, [userId]);
+      connection.query(`DELETE FROM user WHERE _id = (?)`, [userId]);
+      return res.status(200).json({ message: 'Compte utilisateur et son contenu supprimés !' });
     });
   }
   catch (error) {
