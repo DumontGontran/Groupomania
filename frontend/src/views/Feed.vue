@@ -20,20 +20,20 @@
                     :title="'Créé le ' + dateFormat[index] + ' à ' + timeFormat[index]">
                     <p class="post_lastname post_firstname">{{ post.lastName }} {{ post.firstName }}</p>
                     <span v-if="!post.edit_mode">
-                        <i class="fas fa-edit" id="comment_submit" v-show="users[0].role == 1 || post.userId == users[0].userId"
+                        <i class="fas fa-edit" id="comment_submit" v-show="users[0].role == 1 || post.userId == userId"
                             v-on:click.prevent="post.edit_mode = true; post.origin_value = post.text"></i>
-                        <i class="fas fa-trash-alt" v-show="users[0].role == 1 || post.userId == users[0].userId"
+                        <i class="fas fa-trash-alt" v-show="users[0].role == 1 || post.userId == userId"
                             v-on:click.prevent="deletePost(post.postId)"></i>
                     </span>
                 </div>
                 <div class="flex flex_row flex_between">
                     <p class="comment_comment" v-if="!post.edit_mode">{{ post.text }}</p>
-                    <input v-show="users[0].role == 1 && post.edit_mode || post.userId == users[0].userId && post.edit_mode" type="text" class="comment_create"
+                    <input v-show="users[0].role == 1 && post.edit_mode || post.userId == userId && post.edit_mode" type="text" class="comment_create"
                         id="comment_create" v-model="post.text" required>
                     <span v-if="post.edit_mode" class="flex flex_align--center">
-                        <i class="fas fa-check" id="comment_submit" v-show="users[0].role == 1 || post.userId == users[0].userId"
+                        <i class="fas fa-check" id="comment_submit" v-show="users[0].role == 1 || post.userId == userId"
                             v-on:click.prevent="post.edit_mode = false; modifyPost(post)"></i>
-                        <i class="fas fa-times" id="comment_submit" v-show="users[0].role == 1 || post.userId == users[0].userId"
+                        <i class="fas fa-times" id="comment_submit" v-show="users[0].role == 1 || post.userId == userId"
                             v-on:click.prevent="post.edit_mode = false; post.text = post.origin_value"></i>
                     </span>
                 </div>
@@ -55,20 +55,20 @@
                         <p class="comment_lastname comment_firstname">{{ comment.lastName }} {{ comment.firstName }}</p>
 
                         <span v-if="!comment.edit_mode">
-                            <i class="fas fa-edit" id="comment_submit" v-show="users[0].role == 1 || comment.userId == users[0].userId"
+                            <i class="fas fa-edit" id="comment_submit" v-show="users[0].role == 1 || comment.userId == userId"
                                 v-on:click.prevent="comment.edit_mode = true; comment.origin_value = comment.comment"></i>
-                            <i class="fas fa-trash-alt" v-show="users[0].role == 1 || comment.userId == users[0].userId"
+                            <i class="fas fa-trash-alt" v-show="users[0].role == 1 || comment.userId == userId"
                                 v-on:click.prevent="deleteComment(comment.commentId)"></i>
                         </span>
                     </div>
                     <div class="flex flex_row flex_between">
                         <p class="comment_comment" v-if="!comment.edit_mode">{{ comment.comment }}</p>
-                        <input v-show="users[0].role == 1 && comment.edit_mode || comment.userId == users[0].userId && comment.edit_mode" type="text" class="comment_create"
+                        <input v-show="users[0].role == 1 && comment.edit_mode || comment.userId == userId && comment.edit_mode" type="text" class="comment_create"
                             id="comment_create" v-model="comment.comment">
                         <span v-if="comment.edit_mode" class="flex flex_align--center">
-                            <i class="fas fa-check" id="comment_submit" v-show="users[0].role == 1 || comment.userId == users[0].userId"
+                            <i class="fas fa-check" id="comment_submit" v-show="users[0].role == 1 || comment.userId == userId"
                                 v-on:click.prevent="comment.edit_mode = false; modifyComment(comment)"></i>
-                            <i class="fas fa-times" id="comment_submit" v-show="users[0].role == 1 || comment.userId == users[0].userId"
+                            <i class="fas fa-times" id="comment_submit" v-show="users[0].role == 1 || comment.userId == userId"
                                 v-on:click.prevent="comment.edit_mode = false; comment.comment = comment.origin_value"></i>
                         </span>
                     </div>
@@ -89,6 +89,7 @@ export default {
     },
     data() {
         return {
+            userId: localStorage.getItem('userId'),
             users:[],
             posts: [],
             comments: [],

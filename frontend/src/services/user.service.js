@@ -51,12 +51,10 @@ export default {
                 console.log(user),
                 localStorage.setItem('userId', parseInt(res.data.userId)),
                 localStorage.setItem('token', res.data.token),
+                localStorage.getItem('userId'),
+                localStorage.getItem('token'),
                 state.message = 'Connexion réussie !',
-                setTimeout(() => {
-                    userId,
-                    token,
-                    router.push('/feed')
-                }, 1000)
+                router.push('/feed')
         }
         catch (error) {
             return error,
